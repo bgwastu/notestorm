@@ -22,6 +22,14 @@ type AutoGenerationSettings = {
   enabled: boolean;
 };
 
+type SpellcheckSettings = {
+  enabled: boolean;
+};
+
+type AiFeatureSettings = {
+  enabled: boolean;
+};
+
 const PROVIDERS: SettingsProvider[] = [
   "groq",
   "google",
@@ -36,6 +44,8 @@ export type SettingsState = {
   entries: ProviderPreferences;
   demo: DemoSettings;
   autoGeneration: AutoGenerationSettings;
+  spellcheck: SpellcheckSettings;
+  aiFeature: AiFeatureSettings;
 };
 
 type StoredSettings = Partial<{
@@ -46,6 +56,8 @@ type StoredSettings = Partial<{
   modelId: string;
   demo: Partial<DemoSettings>;
   autoGeneration: Partial<AutoGenerationSettings>;
+  spellcheck: Partial<SpellcheckSettings>;
+  aiFeature: Partial<AiFeatureSettings>;
 }>;
 
 function listProviderModels(provider: SettingsProvider) {
@@ -93,6 +105,8 @@ function createDefaultState(): SettingsState {
     entries: createDefaultEntries(),
     demo: { useDemoApi: false },
     autoGeneration: { enabled: false },
+    spellcheck: { enabled: false },
+    aiFeature: { enabled: true },
   };
 }
 
@@ -135,7 +149,15 @@ function normalizeSettings(raw: StoredSettings | undefined): SettingsState {
     enabled: raw.autoGeneration?.enabled ?? false,
   };
 
-  return { provider, entries, demo, autoGeneration };
+  const spellcheck: SpellcheckSettings = {
+    enabled: raw.spellcheck?.enabled ?? false,
+  };
+
+  const aiFeature: AiFeatureSettings = {
+    enabled: raw.aiFeature?.enabled ?? true,
+  };
+
+  return { provider, entries, demo, autoGeneration, spellcheck, aiFeature };
 }
 
 export function useSettingsPersistence(storageKey: string) {
@@ -260,11 +282,33 @@ export function useSettingsPersistence(storageKey: string) {
     [commit]
   );
 
+  const setSpellcheckEnabled = useCallback(
+    (enabled: boolean) => {
+      commit((previous) => ({
+        ...previous,
+        spellcheck: { enabled },
+      }));
+    },
+    [commit]
+  );
+
+  const setAiFeatureEnabled = useCallback(
+    (enabled: boolean) => {
+      commit((previous) => ({
+        ...previous,
+        aiFeature: { enabled },
+      }));
+    },
+    [commit]
+  );
+
   const provider = settings.provider;
   const entries = settings.entries;
   const activeEntry = entries[provider];
   const demo = settings.demo;
   const autoGeneration = settings.autoGeneration;
+  const spellcheck = settings.spellcheck;
+  const aiFeature = settings.aiFeature;
 
   const models = useMemo(() => listProviderModels(provider), [provider]);
 
@@ -281,12 +325,16 @@ export function useSettingsPersistence(storageKey: string) {
     activeModel,
     demo,
     autoGeneration,
+    spellcheck,
+    aiFeature,
     isReady,
     selectProvider,
     setModelId,
     setApiKey,
     setUseDemoApi,
     setAutoGenerationEnabled,
+    setSpellcheckEnabled,
+    setAiFeatureEnabled,
     resetSettings,
   };
 }

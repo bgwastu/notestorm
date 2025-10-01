@@ -21,6 +21,7 @@ import CodeMirror, { EditorView, keymap } from "@uiw/react-codemirror";
 import { generateText } from "ai";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AiButton } from "@/components/ai-button";
+import { MenuButton } from "@/components/menu-button";
 import { useEditorPersistence } from "@/hooks/use-editor-persistence";
 import { useSettingsPersistence } from "@/hooks/use-settings-persistence";
 import { aiCompletion } from "@/lib/completion";
@@ -77,12 +78,16 @@ function Home() {
 		activeModel,
 		demo,
 		autoGeneration,
+		spellcheck,
+		aiFeature,
 		isReady: isSettingsReady,
 		selectProvider,
 		setModelId,
 		setApiKey,
 		setUseDemoApi,
 		setAutoGenerationEnabled,
+		setSpellcheckEnabled,
+		setAiFeatureEnabled,
 	} = settingsHook;
 	const activeApiKey = activeEntry.apiKey;
 	const useDemoApi = demo.useDemoApi;
@@ -141,7 +146,10 @@ function Home() {
 				base: markdownLanguage,
 				codeLanguages: languages,
 			}),
-			aiCompletion({
+			EditorView.contentAttributes.of({
+				spellcheck: spellcheck.enabled ? "true" : "false",
+			}),
+			...(aiFeature.enabled ? [aiCompletion({
 				hotkey: AI_COMPLETION_HOTKEY,
 				autoTriggerDelay: autoGeneration.enabled
 					? AUTO_TRIGGER_DELAY
@@ -226,9 +234,9 @@ Output the inserted content only, do not explain. Please mind the spacing and in
 						onTextChange(stripReasoningContent(response.text));
 					}
 				},
-			}),
+			})] : []),
 		],
-		[activeApiKey, activeModel, provider, useDemoApi, autoGeneration.enabled],
+		[activeApiKey, activeModel, provider, useDemoApi, autoGeneration.enabled, spellcheck.enabled, aiFeature.enabled],
 	);
 
 	if (!isReady || !isSettingsReady) {
@@ -240,24 +248,32 @@ Output the inserted content only, do not explain. Please mind the spacing and in
 			<div className="flex justify-between items-center py-4 px-4 container mx-auto">
 				<div></div>
 				<div className="flex items-center gap-2">
-					<AiButton
-						isPopoverOpen={isPopoverOpen}
-						onPopoverOpenChange={setIsPopoverOpen}
-						hotkeyDisplay={hotkeyDisplay}
-						isMobile={isMobile}
-						autoTriggerDelay={AUTO_TRIGGER_DELAY}
-						provider={provider}
-						activeEntry={activeEntry}
-						models={models}
-						activeModel={activeModel}
-						demo={demo}
-						autoGeneration={autoGeneration}
-						selectProvider={selectProvider}
-						setModelId={setModelId}
-						setApiKey={setApiKey}
-						setUseDemoApi={setUseDemoApi}
-						setAutoGenerationEnabled={setAutoGenerationEnabled}
-					/>
+					{aiFeature.enabled && (
+						<AiButton
+							isPopoverOpen={isPopoverOpen}
+							onPopoverOpenChange={setIsPopoverOpen}
+							hotkeyDisplay={hotkeyDisplay}
+							isMobile={isMobile}
+							autoTriggerDelay={AUTO_TRIGGER_DELAY}
+							provider={provider}
+							activeEntry={activeEntry}
+							models={models}
+							activeModel={activeModel}
+							demo={demo}
+							autoGeneration={autoGeneration}
+							selectProvider={selectProvider}
+							setModelId={setModelId}
+							setApiKey={setApiKey}
+							setUseDemoApi={setUseDemoApi}
+							setAutoGenerationEnabled={setAutoGenerationEnabled}
+						/>
+					)}
+					<MenuButton
+					spellcheckEnabled={spellcheck.enabled}
+					onSpellcheckToggle={setSpellcheckEnabled}
+					aiFeatureEnabled={aiFeature.enabled}
+					onAiFeatureToggle={setAiFeatureEnabled}
+				/>
 				</div>
 			</div>
 			<CodeMirror
