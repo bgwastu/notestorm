@@ -1,4 +1,3 @@
-import { createFileRoute } from '@tanstack/react-router'
 import {
   closeBracketsKeymap,
   completionKeymap,
@@ -16,12 +15,14 @@ import type { ViewUpdate } from "@codemirror/view";
 import { tags as t } from "@lezer/highlight";
 import { useOs } from "@mantine/hooks";
 import { vscodeKeymap } from "@replit/codemirror-vscode-keymap";
+import { createFileRoute } from '@tanstack/react-router'
 import { createTheme } from "@uiw/codemirror-themes";
 import CodeMirror, { EditorView, keymap } from "@uiw/react-codemirror";
 import { generateText } from "ai";
 import { WandSparkles } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -34,7 +35,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
 import { useEditorPersistence } from "@/hooks/use-editor-persistence";
 import { useSettingsPersistence } from "@/hooks/use-settings-persistence";
 import { aiCompletion } from "@/lib/completion";
