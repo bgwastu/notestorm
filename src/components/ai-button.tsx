@@ -1,16 +1,15 @@
 import { generateText } from "ai";
-import { WandSparkles } from "lucide-react";
+import { Loader2, WandSparkles } from "lucide-react";
 import { useCallback, useId, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
 	Dialog,
 	DialogContent,
-	DialogFooter,
 	DialogHeader,
 	DialogTitle,
 } from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
 import {
 	Popover,
 	PopoverContent,
@@ -26,6 +25,7 @@ import {
 import { Switch } from "@/components/ui/switch";
 import type { SettingsProvider } from "@/lib/list-model";
 import { createProviderModel, getProviderLabel } from "@/lib/provider-models";
+import { cn } from "@/lib/utils";
 
 interface AiButtonProps {
 	isPopoverOpen: boolean;
@@ -183,39 +183,28 @@ export function AiButton({
 						<DialogTitle>Settings</DialogTitle>
 					</DialogHeader>
 					<div className="flex flex-col gap-4">
-						<div className="flex items-center gap-2">
-							<Checkbox
-								id={demoApiId}
-								checked={useDemoApi}
-								onCheckedChange={(checked) => setUseDemoApi(checked === true)}
-							/>
-							<label
-								htmlFor={demoApiId}
-								className="text-sm font-medium text-foreground cursor-pointer"
-							>
-								Use Demo API
-							</label>
-						</div>
 						<div className="flex items-center justify-between">
-							<label
-								htmlFor={autoGenerationId}
-								className="text-sm font-medium text-foreground cursor-pointer"
-							>
+							<Label htmlFor={autoGenerationId} className="cursor-pointer">
 								Auto-generate on pause
-							</label>
+							</Label>
 							<Switch
 								id={autoGenerationId}
 								checked={autoGeneration?.enabled ?? false}
 								onCheckedChange={(checked) => setAutoGenerationEnabled(checked)}
 							/>
 						</div>
+						<div className="flex items-center justify-between">
+							<Label htmlFor={demoApiId} className="cursor-pointer">
+								Use Demo API instead
+							</Label>
+							<Switch
+								id={demoApiId}
+								checked={useDemoApi}
+								onCheckedChange={(checked) => setUseDemoApi(checked)}
+							/>
+						</div>
 						<div className="flex flex-col gap-2">
-							<label
-								htmlFor={providerId}
-								className="text-sm font-medium text-foreground"
-							>
-								Provider
-							</label>
+							<Label htmlFor={providerId}>Provider</Label>
 							<Select
 								value={provider}
 								onValueChange={(value) =>
@@ -236,12 +225,7 @@ export function AiButton({
 							</Select>
 						</div>
 						<div className="flex flex-col gap-2">
-							<label
-								htmlFor={modelId}
-								className="text-sm font-medium text-foreground"
-							>
-								Model
-							</label>
+							<Label htmlFor={modelId}>Model</Label>
 							<Select
 								value={activeEntry.modelId}
 								onValueChange={(value) => setModelId(value)}
@@ -270,12 +254,7 @@ export function AiButton({
 							</Select>
 						</div>
 						<div className="flex flex-col gap-2">
-							<label
-								htmlFor={apiKeyId}
-								className="text-sm font-medium text-foreground"
-							>
-								API Key
-							</label>
+							<Label htmlFor={apiKeyId}>API Key</Label>
 							<input
 								id={apiKeyId}
 								type="password"
@@ -286,16 +265,27 @@ export function AiButton({
 								autoComplete="off"
 								disabled={useDemoApi}
 							/>
+							<div className="flex items-center justify-between">
+								<button
+									type="button"
+									onClick={handleTestApiKey}
+									disabled={isTestDisabled || useDemoApi}
+									className={cn(
+										"text-sm font-medium hover:text-foreground transition-colors disabled:opacity-50 disabled:cursor-not-allowed",
+										{
+											"opacity-50 cursor-not-allowed": isTestDisabled,
+											"text-foreground": activeApiKey.trim() !== "",
+										},
+									)}
+								>
+									Test API Key
+								</button>
+								<div className="w-4 h-4">
+									{isTestingKey && <Loader2 className="w-4 h-4 animate-spin" />}
+								</div>
+							</div>
 						</div>
 					</div>
-					<DialogFooter>
-						<Button
-							onClick={handleTestApiKey}
-							disabled={isTestDisabled || useDemoApi}
-						>
-							{isTestingKey ? "Testing..." : "Test API Key"}
-						</Button>
-					</DialogFooter>
 				</DialogContent>
 			</Dialog>
 		</>
