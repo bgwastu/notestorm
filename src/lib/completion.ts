@@ -40,6 +40,7 @@ export type AiCompletionConfig = {
   hotkey?: string;
   autoTriggerDelay?: number;
   command?: string;
+  suppressAutoErrors?: boolean;
 };
 
 type NormalizedAiCompletionConfig = {
@@ -47,6 +48,7 @@ type NormalizedAiCompletionConfig = {
   hotkey: string;
   autoTriggerDelay?: number;
   command: string;
+  suppressAutoErrors?: boolean;
 };
 
 // This will be overridden by the config, but keeping for backward compatibility
@@ -475,7 +477,7 @@ function generateAutoTrigger(view: EditorView) {
   if (currentAbortController && !currentAbortController.signal.aborted) {
     return;
   }
-  const { insert, command } = view.state.facet(completionConfigFacet);
+  const { insert, command, suppressAutoErrors } = view.state.facet(completionConfigFacet);
   const { to } = state.selection.ranges[0];
   const text = state.doc.toString();
   if (!text.trim()) {
@@ -508,7 +510,7 @@ function generateAutoTrigger(view: EditorView) {
       currentAbortController = null;
 
       const errorObj = error as { name?: string; message?: string } | null;
-      if (errorObj?.name !== "AbortError") {
+      if (errorObj?.name !== "AbortError" && !suppressAutoErrors) {
         const message = errorObj?.message || "Failed to connect to AI, please try again later.";
         toast.error(message);
       }
@@ -667,6 +669,7 @@ export function aiCompletion(config: AiCompletionConfig) {
     insert: config.insert,
     autoTriggerDelay: config.autoTriggerDelay,
     command: config.command ?? DEFAULT_COMPLETION_COMMAND,
+    suppressAutoErrors: config.suppressAutoErrors,
   };
 
   return [

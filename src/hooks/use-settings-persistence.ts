@@ -18,6 +18,10 @@ type DemoSettings = {
   useDemoApi: boolean;
 };
 
+type AutoGenerationSettings = {
+  enabled: boolean;
+};
+
 const PROVIDERS: SettingsProvider[] = [
   "groq",
   "google",
@@ -31,6 +35,7 @@ export type SettingsState = {
   provider: SettingsProvider;
   entries: ProviderPreferences;
   demo: DemoSettings;
+  autoGeneration: AutoGenerationSettings;
 };
 
 type StoredSettings = Partial<{
@@ -40,6 +45,7 @@ type StoredSettings = Partial<{
   apiKey: string;
   modelId: string;
   demo: Partial<DemoSettings>;
+  autoGeneration: Partial<AutoGenerationSettings>;
 }>;
 
 function listProviderModels(provider: SettingsProvider) {
@@ -86,6 +92,7 @@ function createDefaultState(): SettingsState {
     provider: DEFAULT_PROVIDER,
     entries: createDefaultEntries(),
     demo: { useDemoApi: false },
+    autoGeneration: { enabled: false },
   };
 }
 
@@ -124,7 +131,11 @@ function normalizeSettings(raw: StoredSettings | undefined): SettingsState {
     useDemoApi: raw.demo?.useDemoApi ?? false,
   };
 
-  return { provider, entries, demo };
+  const autoGeneration: AutoGenerationSettings = {
+    enabled: raw.autoGeneration?.enabled ?? false,
+  };
+
+  return { provider, entries, demo, autoGeneration };
 }
 
 export function useSettingsPersistence(storageKey: string) {
@@ -237,10 +248,21 @@ export function useSettingsPersistence(storageKey: string) {
     [commit]
   );
 
+  const setAutoGenerationEnabled = useCallback(
+    (enabled: boolean) => {
+      commit((previous) => ({
+        ...previous,
+        autoGeneration: { enabled },
+      }));
+    },
+    [commit]
+  );
+
   const provider = settings.provider;
   const entries = settings.entries;
   const activeEntry = entries[provider];
   const demo = settings.demo;
+  const autoGeneration = settings.autoGeneration;
 
   const models = useMemo(() => listProviderModels(provider), [provider]);
 
@@ -256,11 +278,13 @@ export function useSettingsPersistence(storageKey: string) {
     models,
     activeModel,
     demo,
+    autoGeneration,
     isReady,
     selectProvider,
     setModelId,
     setApiKey,
     setUseDemoApi,
+    setAutoGenerationEnabled,
     resetSettings,
   };
 }
