@@ -30,6 +30,10 @@ type AiFeatureSettings = {
   enabled: boolean;
 };
 
+type OnboardingSettings = {
+  hasSeenOnboarding: boolean;
+};
+
 const PROVIDERS: SettingsProvider[] = [
   "groq",
   "google",
@@ -46,6 +50,7 @@ export type SettingsState = {
   autoGeneration: AutoGenerationSettings;
   spellcheck: SpellcheckSettings;
   aiFeature: AiFeatureSettings;
+  onboarding: OnboardingSettings;
 };
 
 type StoredSettings = Partial<{
@@ -58,6 +63,7 @@ type StoredSettings = Partial<{
   autoGeneration: Partial<AutoGenerationSettings>;
   spellcheck: Partial<SpellcheckSettings>;
   aiFeature: Partial<AiFeatureSettings>;
+  onboarding: Partial<OnboardingSettings>;
 }>;
 
 function listProviderModels(provider: SettingsProvider) {
@@ -107,6 +113,7 @@ function createDefaultState(): SettingsState {
     autoGeneration: { enabled: false },
     spellcheck: { enabled: false },
     aiFeature: { enabled: true },
+    onboarding: { hasSeenOnboarding: false },
   };
 }
 
@@ -157,7 +164,11 @@ function normalizeSettings(raw: StoredSettings | undefined): SettingsState {
     enabled: raw.aiFeature?.enabled ?? true,
   };
 
-  return { provider, entries, demo, autoGeneration, spellcheck, aiFeature };
+  const onboarding: OnboardingSettings = {
+    hasSeenOnboarding: raw.onboarding?.hasSeenOnboarding ?? false,
+  };
+
+  return { provider, entries, demo, autoGeneration, spellcheck, aiFeature, onboarding };
 }
 
 export function useSettingsPersistence(storageKey: string) {
@@ -302,6 +313,16 @@ export function useSettingsPersistence(storageKey: string) {
     [commit]
   );
 
+  const setHasSeenOnboarding = useCallback(
+    (hasSeenOnboarding: boolean) => {
+      commit((previous) => ({
+        ...previous,
+        onboarding: { hasSeenOnboarding },
+      }));
+    },
+    [commit]
+  );
+
   const provider = settings.provider;
   const entries = settings.entries;
   const activeEntry = entries[provider];
@@ -309,6 +330,7 @@ export function useSettingsPersistence(storageKey: string) {
   const autoGeneration = settings.autoGeneration;
   const spellcheck = settings.spellcheck;
   const aiFeature = settings.aiFeature;
+  const onboarding = settings.onboarding;
 
   const models = useMemo(() => listProviderModels(provider), [provider]);
 
@@ -327,6 +349,7 @@ export function useSettingsPersistence(storageKey: string) {
     autoGeneration,
     spellcheck,
     aiFeature,
+    onboarding,
     isReady,
     selectProvider,
     setModelId,
@@ -335,6 +358,7 @@ export function useSettingsPersistence(storageKey: string) {
     setAutoGenerationEnabled,
     setSpellcheckEnabled,
     setAiFeatureEnabled,
+    setHasSeenOnboarding,
     resetSettings,
   };
 }

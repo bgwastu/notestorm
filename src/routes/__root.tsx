@@ -16,6 +16,10 @@ export const Route = createRootRoute({
       {
         title: 'Notestorm',
       },
+      {
+        name: 'description',
+        content: 'The minimalist writing app with AI that keeps you in flow',
+      },
     ],
     links: [
       {

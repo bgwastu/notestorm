@@ -102,18 +102,31 @@ export function MenuButton({
 			<Dialog open={isAboutOpen} onOpenChange={setIsAboutOpen}>
 				<DialogContent>
 					<DialogHeader>
-						<DialogTitle>About</DialogTitle>
+						<DialogTitle>Notestorm</DialogTitle>
 						<DialogDescription>
-							Notestorm - AI-powered note-taking application
+							The minimalist writing app with AI that keeps you in flow
 						</DialogDescription>
 					</DialogHeader>
 					<div className="flex flex-col gap-4">
-						<p className="text-sm text-muted-foreground">
-							Version 1.0.0
+						<p className="text-sm">
+							Notestorm is a scratchpad for temporary brainstorming (and
+							sometimes draft notes).
 						</p>
 						<p className="text-sm">
-							A modern note-taking application with AI-powered writing assistance
-							to help you create better content faster.
+							I skip words when brainstorming. They're on the tip of my tongue
+							but I can't get them out, and I lose my train of thought. I made
+							this so I can keep writing.
+						</p>
+						<p className="text-sm text-muted-foreground">
+							Created by{" "}
+							<a
+								href="https://wastu.net"
+								target="_blank"
+								rel="noopener noreferrer"
+								className="underline hover:text-foreground"
+							>
+								Bagas Wastu
+							</a>
 						</p>
 					</div>
 				</DialogContent>
@@ -124,7 +137,8 @@ export function MenuButton({
 					<DialogHeader>
 						<DialogTitle>Feedback</DialogTitle>
 						<DialogDescription>
-							We'd love to hear from you
+							I'd love to hear your thoughts - your feedback helps me improve
+							this app :)
 						</DialogDescription>
 					</DialogHeader>
 					<div className="flex flex-col gap-4">
