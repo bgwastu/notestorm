@@ -19,6 +19,7 @@ import {
   type ViewUpdate,
   WidgetType,
 } from "@codemirror/view";
+import { toast } from "sonner";
 
 export type PromptParams = {
   prefix: string;
@@ -424,19 +425,37 @@ function generate(view: EditorView) {
   const prefix = text.slice(0, to);
   const suffix = text.slice(to);
   currentAbortController = new AbortController();
-  insert({
-    prefix,
-    suffix,
-    selection: "",
-    command,
-    onTextChange: (nextText) => {
+  const abortController = currentAbortController;
+
+  Promise.resolve(
+    insert({
+      prefix,
+      suffix,
+      selection: "",
+      command,
+      onTextChange: (nextText) => {
+        view.dispatch({
+          effects: [CompletionEffect.of({ text: nextText, doc, loading: false })],
+        });
+        currentAbortController = null;
+      },
+      abortSignal: abortController.signal,
+    })
+  ).catch((error) => {
+    if (currentAbortController === abortController) {
       view.dispatch({
-        effects: [CompletionEffect.of({ text: nextText, doc, loading: false })],
+        effects: [CompletionEffect.of({ text: null, doc, loading: false })],
       });
       currentAbortController = null;
-    },
-    abortSignal: currentAbortController.signal,
+
+      const errorObj = error as { name?: string; message?: string } | null;
+      if (errorObj?.name !== "AbortError") {
+        const message = errorObj?.message || "Failed to connect to AI, please try again later.";
+        toast.error(message);
+      }
+    }
   });
+
   view.focus();
   view.dispatch({
     effects: [CompletionEffect.of({ text: null, doc, loading: true })],
@@ -465,19 +484,37 @@ function generateAutoTrigger(view: EditorView) {
   const prefix = text.slice(0, to);
   const suffix = text.slice(to);
   currentAbortController = new AbortController();
-  insert({
-    prefix,
-    suffix,
-    selection: "",
-    command,
-    onTextChange: (nextText) => {
+  const abortController = currentAbortController;
+
+  Promise.resolve(
+    insert({
+      prefix,
+      suffix,
+      selection: "",
+      command,
+      onTextChange: (nextText) => {
+        view.dispatch({
+          effects: [CompletionEffect.of({ text: nextText, doc, loading: false })],
+        });
+        currentAbortController = null;
+      },
+      abortSignal: abortController.signal,
+    })
+  ).catch((error) => {
+    if (currentAbortController === abortController) {
       view.dispatch({
-        effects: [CompletionEffect.of({ text: nextText, doc, loading: false })],
+        effects: [CompletionEffect.of({ text: null, doc, loading: false })],
       });
       currentAbortController = null;
-    },
-    abortSignal: currentAbortController.signal,
+
+      const errorObj = error as { name?: string; message?: string } | null;
+      if (errorObj?.name !== "AbortError") {
+        const message = errorObj?.message || "Failed to connect to AI, please try again later.";
+        toast.error(message);
+      }
+    }
   });
+
   view.dispatch({
     effects: [CompletionEffect.of({ text: null, doc, loading: true })],
   });
