@@ -1,5 +1,5 @@
 import { generateText } from "ai";
-import { Loader2, WandSparkles } from "lucide-react";
+import { Loader2, WandSparkles, ShieldCheck } from "lucide-react";
 import { useCallback, useId, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -30,6 +30,8 @@ import { cn } from "@/lib/utils";
 interface AiButtonProps {
 	isPopoverOpen: boolean;
 	onPopoverOpenChange: (open: boolean) => void;
+	isSettingsOpen?: boolean;
+	onSettingsOpenChange?: (open: boolean) => void;
 	hotkeyDisplay: {
 		modifierKey: string;
 		mainKey: string;
@@ -52,6 +54,8 @@ interface AiButtonProps {
 export function AiButton({
 	isPopoverOpen,
 	onPopoverOpenChange,
+	isSettingsOpen: externalIsSettingsOpen,
+	onSettingsOpenChange: externalOnSettingsOpenChange,
 	hotkeyDisplay,
 	isMobile,
 	autoTriggerDelay,
@@ -67,8 +71,11 @@ export function AiButton({
 	setUseDemoApi,
 	setAutoGenerationEnabled,
 }: AiButtonProps) {
-	const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+	const [internalIsSettingsOpen, setInternalIsSettingsOpen] = useState(false);
 	const [isTestingKey, setIsTestingKey] = useState(false);
+
+	const isSettingsOpen = externalIsSettingsOpen ?? internalIsSettingsOpen;
+	const setIsSettingsOpen = externalOnSettingsOpenChange ?? setInternalIsSettingsOpen;
 	const providerId = useId();
 	const modelId = useId();
 	const apiKeyId = useId();
@@ -284,6 +291,12 @@ export function AiButton({
 									{isTestingKey && <Loader2 className="w-4 h-4 animate-spin" />}
 								</div>
 							</div>
+						</div>
+						<div className="flex items-start gap-2 p-3 rounded-md bg-muted/50 border border-muted-foreground/20">
+							<ShieldCheck className="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
+							<p className="text-xs text-muted-foreground">
+								Your API key is stored locally on your device and never sent to our servers. All AI requests go directly to your chosen provider.
+							</p>
 						</div>
 					</div>
 				</DialogContent>

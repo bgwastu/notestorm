@@ -22,6 +22,7 @@ import { generateText } from "ai";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AiButton } from "@/components/ai-button";
 import { MenuButton } from "@/components/menu-button";
+import { OnboardingModal } from "@/components/onboarding-modal";
 import { useEditorPersistence } from "@/hooks/use-editor-persistence";
 import { useSettingsPersistence } from "@/hooks/use-settings-persistence";
 import { aiCompletion } from "@/lib/completion";
@@ -68,6 +69,7 @@ function Home() {
 	const os = useOs();
 	const editorRef = useRef<EditorView | null>(null);
 	const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+	const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 	const { value, setValue, initialState, isReady, persistState } =
 		useEditorPersistence(STORAGE_KEY, stateFields);
 	const settingsHook = useSettingsPersistence(SETTINGS_STORAGE_KEY);
@@ -80,6 +82,7 @@ function Home() {
 		autoGeneration,
 		spellcheck,
 		aiFeature,
+		onboarding,
 		isReady: isSettingsReady,
 		selectProvider,
 		setModelId,
@@ -88,6 +91,7 @@ function Home() {
 		setAutoGenerationEnabled,
 		setSpellcheckEnabled,
 		setAiFeatureEnabled,
+		setHasSeenOnboarding,
 	} = settingsHook;
 	const activeApiKey = activeEntry.apiKey;
 	const useDemoApi = demo.useDemoApi;
@@ -121,6 +125,17 @@ function Home() {
 	const handleEditorCreate = useCallback((view: EditorView) => {
 		editorRef.current = view;
 	}, []);
+
+	const handleOnboardingComplete = useCallback(
+		(useDemoApi: boolean, openSettings: boolean) => {
+			setUseDemoApi(useDemoApi);
+			setHasSeenOnboarding(true);
+			if (openSettings) {
+				setIsSettingsOpen(true);
+			}
+		},
+		[setUseDemoApi, setHasSeenOnboarding],
+	);
 
 	useEffect(() => {
 		document.addEventListener("click", handleGlobalClick);
@@ -244,49 +259,57 @@ Output the inserted content only, do not explain. Please mind the spacing and in
 	}
 
 	return (
-		<div className="flex flex-col gap-2">
-			<div className="flex justify-between items-center py-4 px-4 container mx-auto">
-				<div></div>
-				<div className="flex items-center gap-2">
-					{aiFeature.enabled && (
-						<AiButton
-							isPopoverOpen={isPopoverOpen}
-							onPopoverOpenChange={setIsPopoverOpen}
-							hotkeyDisplay={hotkeyDisplay}
-							isMobile={isMobile}
-							autoTriggerDelay={AUTO_TRIGGER_DELAY}
-							provider={provider}
-							activeEntry={activeEntry}
-							models={models}
-							activeModel={activeModel}
-							demo={demo}
-							autoGeneration={autoGeneration}
-							selectProvider={selectProvider}
-							setModelId={setModelId}
-							setApiKey={setApiKey}
-							setUseDemoApi={setUseDemoApi}
-							setAutoGenerationEnabled={setAutoGenerationEnabled}
-						/>
-					)}
-					<MenuButton
-					spellcheckEnabled={spellcheck.enabled}
-					onSpellcheckToggle={setSpellcheckEnabled}
-					aiFeatureEnabled={aiFeature.enabled}
-					onAiFeatureToggle={setAiFeatureEnabled}
-				/>
-				</div>
-			</div>
-			<CodeMirror
-				value={value}
-				onChange={handleChange}
-				initialState={initialState}
-				extensions={extensions}
-				placeholder="Write something..."
-				autoFocus
-				theme={theme}
-				basicSetup={false}
-				onCreateEditor={handleEditorCreate}
+		<>
+			<OnboardingModal
+				isOpen={!onboarding.hasSeenOnboarding}
+				onComplete={handleOnboardingComplete}
 			/>
-		</div>
+			<div className="flex flex-col gap-2">
+				<div className="flex justify-between items-center py-4 px-4 container mx-auto">
+					<div></div>
+					<div className="flex items-center gap-2">
+						{aiFeature.enabled && (
+							<AiButton
+								isPopoverOpen={isPopoverOpen}
+								onPopoverOpenChange={setIsPopoverOpen}
+								isSettingsOpen={isSettingsOpen}
+								onSettingsOpenChange={setIsSettingsOpen}
+								hotkeyDisplay={hotkeyDisplay}
+								isMobile={isMobile}
+								autoTriggerDelay={AUTO_TRIGGER_DELAY}
+								provider={provider}
+								activeEntry={activeEntry}
+								models={models}
+								activeModel={activeModel}
+								demo={demo}
+								autoGeneration={autoGeneration}
+								selectProvider={selectProvider}
+								setModelId={setModelId}
+								setApiKey={setApiKey}
+								setUseDemoApi={setUseDemoApi}
+								setAutoGenerationEnabled={setAutoGenerationEnabled}
+							/>
+						)}
+						<MenuButton
+						spellcheckEnabled={spellcheck.enabled}
+						onSpellcheckToggle={setSpellcheckEnabled}
+						aiFeatureEnabled={aiFeature.enabled}
+						onAiFeatureToggle={setAiFeatureEnabled}
+					/>
+					</div>
+				</div>
+				<CodeMirror
+					value={value}
+					onChange={handleChange}
+					initialState={initialState}
+					extensions={extensions}
+					placeholder="Write something..."
+					autoFocus
+					theme={theme}
+					basicSetup={false}
+					onCreateEditor={handleEditorCreate}
+				/>
+			</div>
+		</>
 	);
 }
