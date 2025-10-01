@@ -20,6 +20,10 @@ export function OnboardingModal({ isOpen, onComplete }: OnboardingModalProps) {
 		"demo",
 	);
 
+	const isMobile = useMemo(() => {
+		return os === "android" || os === "ios";
+	}, [os]);
+
 	const modifierKey = useMemo(() => {
 		return os === "macos" || os === "ios" ? "⌘" : "Ctrl";
 	}, [os]);
@@ -56,17 +60,32 @@ export function OnboardingModal({ isOpen, onComplete }: OnboardingModalProps) {
 					<div className="flex flex-col gap-2 sm:gap-3">
 						<div className="flex flex-col gap-1.5 sm:gap-2 bg-muted/50 p-3 sm:p-4 rounded-lg">
 							<p className="text-xs sm:text-sm font-medium">How to trigger AI:</p>
-							<p className="text-xs sm:text-sm text-muted-foreground">
-								Press{" "}
-								<kbd className="px-1.5 py-0.5 bg-background text-foreground rounded text-xs font-mono border">
-									{modifierKey}
-								</kbd>{" "}
-								+{" "}
-								<kbd className="px-1.5 py-0.5 bg-background text-foreground rounded text-xs font-mono border">
-									I
-								</kbd>{" "}
-								to get AI suggestions as you write
-							</p>
+							{isMobile ? (
+								<p className="text-xs sm:text-sm text-muted-foreground">
+									AI will automatically suggest text as you write. Tap the
+									suggestion to accept it, or press{" "}
+									<kbd className="px-1.5 py-0.5 bg-background text-foreground rounded text-xs font-mono border">
+										{modifierKey}
+									</kbd>{" "}
+									+{" "}
+									<kbd className="px-1.5 py-0.5 bg-background text-foreground rounded text-xs font-mono border">
+										I
+									</kbd>{" "}
+									if using a keyboard
+								</p>
+							) : (
+								<p className="text-xs sm:text-sm text-muted-foreground">
+									Press{" "}
+									<kbd className="px-1.5 py-0.5 bg-background text-foreground rounded text-xs font-mono border">
+										{modifierKey}
+									</kbd>{" "}
+									+{" "}
+									<kbd className="px-1.5 py-0.5 bg-background text-foreground rounded text-xs font-mono border">
+										I
+									</kbd>{" "}
+									to get AI suggestions as you write
+								</p>
+							)}
 						</div>
 					</div>
 					<div className="flex flex-col gap-2 sm:gap-3">

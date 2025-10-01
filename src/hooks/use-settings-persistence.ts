@@ -105,21 +105,21 @@ function coerceProvider(value: SettingsProvider | undefined) {
   return value && PROVIDERS.includes(value) ? value : DEFAULT_PROVIDER;
 }
 
-function createDefaultState(): SettingsState {
+function createDefaultState(isMobile?: boolean): SettingsState {
   return {
     provider: DEFAULT_PROVIDER,
     entries: createDefaultEntries(),
     demo: { useDemoApi: false },
-    autoGeneration: { enabled: false },
+    autoGeneration: { enabled: isMobile ?? false },
     spellcheck: { enabled: false },
     aiFeature: { enabled: true },
     onboarding: { hasSeenOnboarding: false },
   };
 }
 
-function normalizeSettings(raw: StoredSettings | undefined): SettingsState {
+function normalizeSettings(raw: StoredSettings | undefined, isMobile?: boolean): SettingsState {
   if (!raw) {
-    return createDefaultState();
+    return createDefaultState(isMobile);
   }
 
   const provider = coerceProvider(raw.provider);
@@ -153,7 +153,7 @@ function normalizeSettings(raw: StoredSettings | undefined): SettingsState {
   };
 
   const autoGeneration: AutoGenerationSettings = {
-    enabled: raw.autoGeneration?.enabled ?? false,
+    enabled: raw.autoGeneration?.enabled ?? (isMobile ?? false),
   };
 
   const spellcheck: SpellcheckSettings = {
@@ -171,9 +171,9 @@ function normalizeSettings(raw: StoredSettings | undefined): SettingsState {
   return { provider, entries, demo, autoGeneration, spellcheck, aiFeature, onboarding };
 }
 
-export function useSettingsPersistence(storageKey: string) {
+export function useSettingsPersistence(storageKey: string, isMobile?: boolean) {
   const [settings, setSettings] = useState<SettingsState>(() =>
-    createDefaultState()
+    createDefaultState(isMobile)
   );
   const [isReady, setIsReady] = useState(false);
 
@@ -185,7 +185,7 @@ export function useSettingsPersistence(storageKey: string) {
         if (cancelled) {
           return;
         }
-        setSettings(normalizeSettings(saved));
+        setSettings(normalizeSettings(saved, isMobile));
       } catch {
       } finally {
         if (!cancelled) {
@@ -196,7 +196,7 @@ export function useSettingsPersistence(storageKey: string) {
     return () => {
       cancelled = true;
     };
-  }, [storageKey]);
+  }, [storageKey, isMobile]);
 
   const commit = useCallback(
     (updater: (previous: SettingsState) => SettingsState) => {
@@ -270,8 +270,8 @@ export function useSettingsPersistence(storageKey: string) {
   );
 
   const resetSettings = useCallback(() => {
-    commit(() => createDefaultState());
-  }, [commit]);
+    commit(() => createDefaultState(isMobile));
+  }, [commit, isMobile]);
 
   const setUseDemoApi = useCallback(
     (useDemoApi: boolean) => {
