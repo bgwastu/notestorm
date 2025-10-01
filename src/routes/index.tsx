@@ -19,9 +19,9 @@ import { createFileRoute } from '@tanstack/react-router'
 import { createTheme } from "@uiw/codemirror-themes";
 import CodeMirror, { EditorView, keymap } from "@uiw/react-codemirror";
 import { generateText } from "ai";
-import { WandSparkles } from "lucide-react";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
+import { AiButton } from "@/components/ai-button";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -30,11 +30,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { useEditorPersistence } from "@/hooks/use-editor-persistence";
 import { useSettingsPersistence } from "@/hooks/use-settings-persistence";
 import { aiCompletion } from "@/lib/completion";
@@ -95,12 +90,12 @@ const theme = createTheme({
   theme: "light",
   settings: {
     background: "#ffffff",
-    foreground: "#4D4D4C",
+    foreground: "#334155",
     caret: "#AEAFAD",
     selection: "#D6D6D6",
     selectionMatch: "#D6D6D6",
     gutterBackground: "#FFFFFF",
-    gutterForeground: "#4D4D4C",
+    gutterForeground: "#334155",
     gutterBorder: "#dddddd",
     gutterActiveForeground: "",
     lineHighlight: "#EFEFEF",
@@ -124,6 +119,9 @@ function Home() {
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isTestingKey, setIsTestingKey] = useState(false);
+  const providerId = useId();
+  const modelId = useId();
+  const apiKeyId = useId();
   const { value, setValue, initialState, isReady, persistState } =
     useEditorPersistence(STORAGE_KEY, stateFields);
   const {
@@ -146,60 +144,6 @@ function Home() {
   const hotkeyDisplay = useMemo(() => {
     return getHotkeyDisplay(AI_COMPLETION_HOTKEY, os);
   }, [os]);
-
-  const popoverContent = useMemo(() => {
-    const hotkeyHint = isMobile ? (
-      <div className="text-xs">
-        <p className="mb-1">
-          Press{" "}
-          <kbd className="px-1.5 py-0.5 bg-muted text-foreground rounded text-xs font-mono">
-            {hotkeyDisplay.modifierKey}
-          </kbd>{" "}
-          +{" "}
-          <kbd className="px-1.5 py-0.5 bg-muted text-foreground rounded text-xs font-mono">
-            {hotkeyDisplay.mainKey}
-          </kbd>{" "}
-          to trigger
-        </p>
-        <p className="text-muted-foreground">
-          Auto-suggestions available after {AUTO_TRIGGER_DELAY / 1000} seconds
-          of inactivity
-        </p>
-      </div>
-    ) : (
-      <p className="text-xs">
-        Press{" "}
-        <kbd className="px-1.5 py-0.5 bg-muted text-foreground rounded text-xs font-mono">
-          {hotkeyDisplay.modifierKey}
-        </kbd>{" "}
-        +{" "}
-        <kbd className="px-1.5 py-0.5 bg-muted text-foreground rounded text-xs font-mono">
-          {hotkeyDisplay.mainKey}
-        </kbd>{" "}
-        to trigger
-      </p>
-    );
-
-    return (
-      <div>
-        <p className="font-semibold mb-1">AI Writing Assistant</p>
-        <p className="text-xs text-muted-foreground mb-2">
-          Get intelligent suggestions and completions
-        </p>
-        {hotkeyHint}
-        <Button
-          onClick={() => {
-            setIsPopoverOpen(false);
-            setIsSettingsOpen(true);
-          }}
-          variant="outline"
-          className="mt-3 w-full"
-        >
-          Settings
-        </Button>
-      </div>
-    );
-  }, [hotkeyDisplay, isMobile]);
 
   const handleTestApiKey = useCallback(async () => {
     if (!activeApiKey) {
@@ -284,24 +228,19 @@ function Home() {
           "Write the continuation that fits between the provided prefix and suffix. Mirror the user's emotional tone, voice, and pacing. Avoid repeating suffix content. Limit to 30 words and allow incomplete endings.",
         insert: async ({ onTextChange, abortSignal, ...promptParams }) => {
           if (!activeApiKey) {
-            toast.error("Add an API key in Settings.");
-            onTextChange("");
-            return;
+            throw new Error("Add an API key in Settings.");
           }
           if (!activeModel) {
-            toast.error("Select a model in Settings.");
-            onTextChange("");
-            return;
+            throw new Error("Select a model in Settings.");
           }
-          try {
-            const model = await createProviderModel(
-              provider,
-              activeApiKey,
-              activeModel.apiModelId
-            );
-            const response = await generateText({
-              model,
-              prompt: `
+          const model = await createProviderModel(
+            provider,
+            activeApiKey,
+            activeModel.apiModelId
+          );
+          const response = await generateText({
+            model,
+            prompt: `
 You are an AI writing assistant that inserts text at cursor positions while mirroring the user's emotional tone and voice. Only output the inserted content without explanations.
 
 Insert new content at <CURRENTCURSOR/> in the document (USERDOCUMENT) according to the USERCOMMAND.
@@ -315,19 +254,10 @@ USERCOMMAND: ${promptParams.command}
 
 Output the inserted content only, do not explain. Please mind the spacing and indentation.
 `.trim(),
-              abortSignal,
-            });
-            const sanitized = stripReasoningContent(response.text);
-            onTextChange(sanitized);
-          } catch (err: unknown) {
-            const errorObj = err as { name?: string } | null;
-            if (errorObj && errorObj.name === "AbortError") {
-              onTextChange("");
-              return;
-            }
-            toast.error("Failed to connect to AI, please try again later.");
-            onTextChange("");
-          }
+            abortSignal,
+          });
+          const sanitized = stripReasoningContent(response.text);
+          onTextChange(sanitized);
         },
       }),
     ],
@@ -343,17 +273,14 @@ Output the inserted content only, do not explain. Please mind the spacing and in
       <div className="flex justify-between items-center py-4 px-4 container mx-auto">
         <div></div>
         <div className="flex items-center gap-2">
-          <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
-            <PopoverTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <WandSparkles className="w-4 h-4 text-muted-foreground" />
-                <span className="sr-only">Information</span>
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent side="bottom" className="w-72">
-              {popoverContent}
-            </PopoverContent>
-          </Popover>
+          <AiButton
+            isPopoverOpen={isPopoverOpen}
+            onPopoverOpenChange={setIsPopoverOpen}
+            onSettingsClick={() => setIsSettingsOpen(true)}
+            hotkeyDisplay={hotkeyDisplay}
+            isMobile={isMobile}
+            autoTriggerDelay={AUTO_TRIGGER_DELAY}
+          />
           <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
             <DialogContent>
               <DialogHeader>
@@ -362,13 +289,13 @@ Output the inserted content only, do not explain. Please mind the spacing and in
               <div className="flex flex-col gap-4">
                 <div className="flex flex-col gap-2">
                   <label
-                    htmlFor="provider"
+                    htmlFor={providerId}
                     className="text-sm font-medium text-foreground"
                   >
                     Provider
                   </label>
                   <select
-                    id="provider"
+                    id={providerId}
                     value={provider}
                     onChange={(event) =>
                       selectProvider(event.target.value as SettingsProvider)
@@ -384,13 +311,13 @@ Output the inserted content only, do not explain. Please mind the spacing and in
                 </div>
                 <div className="flex flex-col gap-2">
                   <label
-                    htmlFor="model"
+                    htmlFor={modelId}
                     className="text-sm font-medium text-foreground"
                   >
                     Model
                   </label>
                   <select
-                    id="model"
+                    id={modelId}
                     value={activeEntry.modelId}
                     onChange={(event) => setModelId(event.target.value)}
                     className="border border-input rounded-md px-3 py-2 bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring"
@@ -409,13 +336,13 @@ Output the inserted content only, do not explain. Please mind the spacing and in
                 </div>
                 <div className="flex flex-col gap-2">
                   <label
-                    htmlFor="apiKey"
+                    htmlFor={apiKeyId}
                     className="text-sm font-medium text-foreground"
                   >
                     API Key
                   </label>
                   <input
-                    id="apiKey"
+                    id={apiKeyId}
                     type="password"
                     value={activeApiKey}
                     onChange={(event) => setApiKey(event.target.value)}
