@@ -70,9 +70,13 @@ function Home() {
 	const editorRef = useRef<EditorView | null>(null);
 	const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 	const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+	const isMobile = useMemo(() => {
+		return os === "android" || os === "ios";
+	}, [os]);
+
 	const { value, setValue, initialState, isReady, persistState } =
 		useEditorPersistence(STORAGE_KEY, stateFields);
-	const settingsHook = useSettingsPersistence(SETTINGS_STORAGE_KEY);
+	const settingsHook = useSettingsPersistence(SETTINGS_STORAGE_KEY, isMobile);
 	const {
 		provider,
 		activeEntry,
@@ -95,10 +99,6 @@ function Home() {
 	} = settingsHook;
 	const activeApiKey = activeEntry.apiKey;
 	const useDemoApi = demo.useDemoApi;
-
-	const isMobile = useMemo(() => {
-		return os === "android" || os === "ios";
-	}, [os]);
 
 	const hotkeyDisplay = useMemo(() => {
 		return getHotkeyDisplay(AI_COMPLETION_HOTKEY, os);
