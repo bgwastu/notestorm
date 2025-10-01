@@ -1,5 +1,5 @@
 import { generateText } from "ai";
-import { Loader2, WandSparkles, ShieldCheck } from "lucide-react";
+import { Loader2, ShieldCheck, WandSparkles } from "lucide-react";
 import { useCallback, useId, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -75,7 +75,8 @@ export function AiButton({
 	const [isTestingKey, setIsTestingKey] = useState(false);
 
 	const isSettingsOpen = externalIsSettingsOpen ?? internalIsSettingsOpen;
-	const setIsSettingsOpen = externalOnSettingsOpenChange ?? setInternalIsSettingsOpen;
+	const setIsSettingsOpen =
+		externalOnSettingsOpenChange ?? setInternalIsSettingsOpen;
 	const providerId = useId();
 	const modelId = useId();
 	const apiKeyId = useId();
@@ -159,8 +160,25 @@ export function AiButton({
 								? "bg-accent text-accent-foreground"
 								: "hover:bg-accent hover:text-accent-foreground"
 						}`}
+						aria-label="AI Writing Assistant"
 					>
-						<WandSparkles className="w-4 h-4 text-muted-foreground" />
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							width="24"
+							height="24"
+							viewBox="0 0 24 24"
+							fill="none"
+							stroke="currentColor"
+							strokeWidth="2"
+							strokeLinecap="round"
+							strokeLinejoin="round"
+							className="w-4 h-4 text-muted-foreground icon icon-tabler icons-tabler-outline icon-tabler-sparkles"
+							aria-hidden="true"
+						>
+							<title>AI Writing Assistant</title>
+							<path stroke="none" d="M0 0h24v24H0z" fill="none" />
+							<path d="M16 18a2 2 0 0 1 2 2a2 2 0 0 1 2 -2a2 2 0 0 1 -2 -2a2 2 0 0 1 -2 2zm0 -12a2 2 0 0 1 2 2a2 2 0 0 1 2 -2a2 2 0 0 1 -2 -2a2 2 0 0 1 -2 2zm-7 12a6 6 0 0 1 6 -6a6 6 0 0 1 -6 -6a6 6 0 0 1 -6 6a6 6 0 0 1 6 6z" />
+						</svg>
 					</button>
 				</PopoverTrigger>
 				<PopoverContent side="bottom" className="w-72">
@@ -295,7 +313,9 @@ export function AiButton({
 						<div className="flex items-start gap-2 p-3 rounded-md bg-muted/50 border border-muted-foreground/20">
 							<ShieldCheck className="w-4 h-4 text-muted-foreground mt-0.5 flex-shrink-0" />
 							<p className="text-xs text-muted-foreground">
-								Your API key is stored locally on your device and never sent to our servers. All AI requests go directly to your chosen provider.
+								Your API key is stored locally on your device and never sent to
+								our servers. All AI requests go directly to your chosen
+								provider.
 							</p>
 						</div>
 					</div>
