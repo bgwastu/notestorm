@@ -4,6 +4,7 @@ import { z } from 'zod'
 export const env = createEnv({
   server: {
     SERVER_URL: z.string().url().optional(),
+    GROQ_API_KEY: z.string(),
   },
 
   /**
@@ -21,6 +22,7 @@ export const env = createEnv({
    * `process.env` or `import.meta.env`.
    */
   runtimeEnv: import.meta.env,
+
 
   /**
    * By default, this library will feed the environment variables directly to

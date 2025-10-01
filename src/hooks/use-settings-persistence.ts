@@ -14,6 +14,10 @@ type ProviderPreference = {
 
 type ProviderPreferences = Record<SettingsProvider, ProviderPreference>;
 
+type DemoSettings = {
+  useDemoApi: boolean;
+};
+
 const PROVIDERS: SettingsProvider[] = [
   "groq",
   "google",
@@ -26,6 +30,7 @@ const DEFAULT_PROVIDER: SettingsProvider = "groq";
 export type SettingsState = {
   provider: SettingsProvider;
   entries: ProviderPreferences;
+  demo: DemoSettings;
 };
 
 type StoredSettings = Partial<{
@@ -34,6 +39,7 @@ type StoredSettings = Partial<{
   apiKeys: Partial<Record<SettingsProvider, string>>;
   apiKey: string;
   modelId: string;
+  demo: Partial<DemoSettings>;
 }>;
 
 function listProviderModels(provider: SettingsProvider) {
@@ -79,6 +85,7 @@ function createDefaultState(): SettingsState {
   return {
     provider: DEFAULT_PROVIDER,
     entries: createDefaultEntries(),
+    demo: { useDemoApi: false },
   };
 }
 
@@ -113,7 +120,11 @@ function normalizeSettings(raw: StoredSettings | undefined): SettingsState {
     };
   }
 
-  return { provider, entries };
+  const demo: DemoSettings = {
+    useDemoApi: raw.demo?.useDemoApi ?? false,
+  };
+
+  return { provider, entries, demo };
 }
 
 export function useSettingsPersistence(storageKey: string) {
@@ -216,9 +227,20 @@ export function useSettingsPersistence(storageKey: string) {
     commit(() => createDefaultState());
   }, [commit]);
 
+  const setUseDemoApi = useCallback(
+    (useDemoApi: boolean) => {
+      commit((previous) => ({
+        ...previous,
+        demo: { useDemoApi },
+      }));
+    },
+    [commit]
+  );
+
   const provider = settings.provider;
   const entries = settings.entries;
   const activeEntry = entries[provider];
+  const demo = settings.demo;
 
   const models = useMemo(() => listProviderModels(provider), [provider]);
 
@@ -233,10 +255,12 @@ export function useSettingsPersistence(storageKey: string) {
     activeEntry,
     models,
     activeModel,
+    demo,
     isReady,
     selectProvider,
     setModelId,
     setApiKey,
+    setUseDemoApi,
     resetSettings,
   };
 }
