@@ -46,6 +46,7 @@ jobs:
         if: steps.changes.outputs.has_changes == 'true'
         uses: peter-evans/create-pull-request@v5
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: 'chore: update AI models list'
           title: 'Update AI Models List'
           body: |
@@ -58,3 +59,6 @@ jobs:
           delete-branch: true
           add-paths: |
             src/lib/list-model.ts
+          labels: |
+            automated
+            dependencies
