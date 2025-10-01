@@ -147,13 +147,13 @@ export function AiButton({
 				<PopoverTrigger asChild>
 					<button
 						type="button"
-						className={`h-12 w-12 rounded-md cursor-pointer transition-colors flex items-center justify-center ${
+						className={`h-9 w-9 rounded-md cursor-pointer transition-colors flex items-center justify-center ${
 							isPopoverOpen
 								? "bg-accent text-accent-foreground"
 								: "hover:bg-accent hover:text-accent-foreground"
 						}`}
 					>
-						<WandSparkles className="w-5 h-5 text-muted-foreground" />
+						<WandSparkles className="w-4 h-4 text-muted-foreground" />
 					</button>
 				</PopoverTrigger>
 				<PopoverContent side="bottom" className="w-72">
