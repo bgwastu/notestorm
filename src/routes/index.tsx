@@ -23,6 +23,7 @@ import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react"
 import { toast } from "sonner";
 import { AiButton } from "@/components/ai-button";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogContent,
@@ -122,6 +123,7 @@ function Home() {
   const providerId = useId();
   const modelId = useId();
   const apiKeyId = useId();
+  const demoApiId = useId();
   const { value, setValue, initialState, isReady, persistState } =
     useEditorPersistence(STORAGE_KEY, stateFields);
   const {
@@ -129,13 +131,16 @@ function Home() {
     activeEntry,
     models,
     activeModel,
+    demo,
     isReady: isSettingsReady,
     selectProvider,
     setModelId,
     setApiKey,
+    setUseDemoApi,
   } = useSettingsPersistence(SETTINGS_STORAGE_KEY);
   const activeApiKey = activeEntry.apiKey;
   const isTestDisabled = isTestingKey || !activeApiKey || !activeModel;
+  const useDemoApi = demo.useDemoApi;
 
   const isMobile = useMemo(() => {
     return os === "android" || os === "ios";
@@ -227,20 +232,17 @@ function Home() {
         command:
           "Write the continuation that fits between the provided prefix and suffix. Mirror the user's emotional tone, voice, and pacing. Avoid repeating suffix content. Limit to 30 words and allow incomplete endings.",
         insert: async ({ onTextChange, abortSignal, ...promptParams }) => {
-          if (!activeApiKey) {
-            throw new Error("Add an API key in Settings.");
-          }
-          if (!activeModel) {
-            throw new Error("Select a model in Settings.");
-          }
-          const model = await createProviderModel(
-            provider,
-            activeApiKey,
-            activeModel.apiModelId
-          );
-          const response = await generateText({
-            model,
-            prompt: `
+          if (useDemoApi) {
+            const response = await fetch("/api/chat", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                messages: [
+                  {
+                    role: "user",
+                    content: `
 You are an AI writing assistant that inserts text at cursor positions while mirroring the user's emotional tone and voice. Only output the inserted content without explanations.
 
 Insert new content at <CURRENTCURSOR/> in the document (USERDOCUMENT) according to the USERCOMMAND.
@@ -254,14 +256,63 @@ USERCOMMAND: ${promptParams.command}
 
 Output the inserted content only, do not explain. Please mind the spacing and indentation.
 `.trim(),
-            abortSignal,
-          });
-          const sanitized = stripReasoningContent(response.text);
-          onTextChange(sanitized);
+                  },
+                ],
+              }),
+              signal: abortSignal,
+            });
+
+            if (!response.ok) {
+              const errorData = await response.json().catch(() => ({}));
+              if (response.status === 429) {
+                const retryAfter = errorData.retryAfter || 10;
+                throw new Error(
+                  `Rate limit exceeded. Please wait ${retryAfter} seconds before trying again.`
+                );
+              }
+              throw new Error(errorData.error || "Demo API request failed");
+            }
+
+            const data = await response.json();
+            const sanitized = stripReasoningContent(data.text);
+            onTextChange(sanitized);
+          } else {
+            if (!activeApiKey) {
+              throw new Error("Add an API key in Settings.");
+            }
+            if (!activeModel) {
+              throw new Error("Select a model in Settings.");
+            }
+            const model = await createProviderModel(
+              provider,
+              activeApiKey,
+              activeModel.apiModelId
+            );
+            const response = await generateText({
+              model,
+              prompt: `
+You are an AI writing assistant that inserts text at cursor positions while mirroring the user's emotional tone and voice. Only output the inserted content without explanations.
+
+Insert new content at <CURRENTCURSOR/> in the document (USERDOCUMENT) according to the USERCOMMAND.
+Insert content at the cursor position only, do not change other text.
+Ensure the inserted passage matches the emotional tone, voice, and pacing of the surrounding USERDOCUMENT content.
+Avoid repeating text that already appears immediately after <CURRENTCURSOR/>.
+
+<USERDOCUMENT>${promptParams.prefix}<CURRENTCURSOR/>${promptParams.suffix}</USERDOCUMENT>
+
+USERCOMMAND: ${promptParams.command}
+
+Output the inserted content only, do not explain. Please mind the spacing and indentation.
+`.trim(),
+              abortSignal,
+            });
+            const sanitized = stripReasoningContent(response.text);
+            onTextChange(sanitized);
+          }
         },
       }),
     ],
-    [activeApiKey, activeModel, isMobile, provider]
+    [activeApiKey, activeModel, isMobile, provider, useDemoApi]
   );
 
   if (!isReady || !isSettingsReady) {
@@ -287,6 +338,19 @@ Output the inserted content only, do not explain. Please mind the spacing and in
                 <DialogTitle>Settings</DialogTitle>
               </DialogHeader>
               <div className="flex flex-col gap-4">
+                <div className="flex items-center gap-2">
+                  <Checkbox
+                    id={demoApiId}
+                    checked={useDemoApi}
+                    onCheckedChange={(checked) => setUseDemoApi(checked === true)}
+                  />
+                  <label
+                    htmlFor={demoApiId}
+                    className="text-sm font-medium text-foreground cursor-pointer"
+                  >
+                    Use Demo API
+                  </label>
+                </div>
                 <div className="flex flex-col gap-2">
                   <label
                     htmlFor={providerId}
@@ -301,6 +365,7 @@ Output the inserted content only, do not explain. Please mind the spacing and in
                       selectProvider(event.target.value as SettingsProvider)
                     }
                     className="border border-input rounded-md px-3 py-2 bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring"
+                    disabled={useDemoApi}
                   >
                     <option value="groq">Groq</option>
                     <option value="google">Google</option>
@@ -321,7 +386,7 @@ Output the inserted content only, do not explain. Please mind the spacing and in
                     value={activeEntry.modelId}
                     onChange={(event) => setModelId(event.target.value)}
                     className="border border-input rounded-md px-3 py-2 bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring"
-                    disabled={!models.length}
+                    disabled={!models.length || useDemoApi}
                   >
                     {models.length ? (
                       models.map((model) => (
@@ -349,13 +414,14 @@ Output the inserted content only, do not explain. Please mind the spacing and in
                     className="border border-input rounded-md px-3 py-2 bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring"
                     placeholder="Enter your API key"
                     autoComplete="off"
+                    disabled={useDemoApi}
                   />
                 </div>
               </div>
               <DialogFooter>
                 <Button
                   onClick={handleTestApiKey}
-                  disabled={isTestDisabled}
+                  disabled={isTestDisabled || useDemoApi}
                 >
                   {isTestingKey ? "Testing..." : "Test API Key"}
                 </Button>
