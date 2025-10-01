@@ -71,9 +71,9 @@ export function MenuButton({
 				<DropdownMenuTrigger asChild>
 					<button
 						type="button"
-						className="h-12 w-12 rounded-md cursor-pointer transition-colors flex items-center justify-center hover:bg-accent hover:text-accent-foreground"
+						className="h-9 w-9 rounded-md cursor-pointer transition-colors flex items-center justify-center hover:bg-accent hover:text-accent-foreground"
 					>
-						<MoreVertical className="w-5 h-5 text-muted-foreground" />
+						<MoreVertical className="w-4 h-4 text-muted-foreground" />
 					</button>
 				</DropdownMenuTrigger>
 				<DropdownMenuContent align="end">
