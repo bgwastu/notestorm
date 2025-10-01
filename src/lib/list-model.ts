@@ -452,6 +452,12 @@ const MODELS: ProviderModel[] = [
     apiModelId: "anthropic/claude-sonnet-4",
   },
   {
+    id: "openrouter-anthropic-claude-4-5-sonnet-20250929",
+    provider: "openrouter",
+    name: "Anthropic: Claude Sonnet 4.5",
+    apiModelId: "anthropic/claude-sonnet-4.5",
+  },
+  {
     id: "openrouter-arcee-ai-afm-4-5b",
     provider: "openrouter",
     name: "Arcee AI: AFM 4.5B",
@@ -606,6 +612,12 @@ const MODELS: ProviderModel[] = [
     provider: "openrouter",
     name: "DeepSeek: DeepSeek V3.1 Terminus",
     apiModelId: "deepseek/deepseek-v3.1-terminus",
+  },
+  {
+    id: "openrouter-deepseek-deepseek-v3-2-exp",
+    provider: "openrouter",
+    name: "DeepSeek: DeepSeek V3.2 Exp",
+    apiModelId: "deepseek/deepseek-v3.2-exp",
   },
   {
     id: "openrouter-deepseek-deepseek-r1",
@@ -1820,12 +1832,6 @@ const MODELS: ProviderModel[] = [
     apiModelId: "thedrummer/anubis-70b-v1.1",
   },
   {
-    id: "openrouter-thedrummer-anubis-pro-105b-v1",
-    provider: "openrouter",
-    name: "TheDrummer: Anubis Pro 105B V1",
-    apiModelId: "thedrummer/anubis-pro-105b-v1",
-  },
-  {
     id: "openrouter-thedrummer-cydonia-24b-v4-1",
     provider: "openrouter",
     name: "TheDrummer: Cydonia 24B V4.1",
@@ -1950,6 +1956,12 @@ const MODELS: ProviderModel[] = [
     provider: "openrouter",
     name: "Z.AI: GLM 4.5V",
     apiModelId: "z-ai/glm-4.5v",
+  },
+  {
+    id: "openrouter-z-ai-glm-4-6",
+    provider: "openrouter",
+    name: "Z.AI: GLM 4.6",
+    apiModelId: "z-ai/glm-4.6",
   },
 ];
 
