@@ -59,6 +59,7 @@ export function MenuButton({
 			setFeedback("");
 			setIsFeedbackOpen(false);
 		} catch (error) {
+			console.error(error);
 			toast.error("Failed to send feedback. Please try again.");
 		} finally {
 			setIsSubmitting(false);

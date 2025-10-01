@@ -1,5 +1,5 @@
-import arcjet, { tokenBucket } from "@arcjet/node";
 import { createGroq } from "@ai-sdk/groq";
+import arcjet, { tokenBucket } from "@arcjet/node";
 import { createFileRoute } from "@tanstack/react-router";
 import { json } from "@tanstack/react-start";
 import { generateText } from "ai";
@@ -81,7 +81,7 @@ export const Route = createFileRoute("/api/chat")({
 
           const groq = createGroq({ apiKey: demoApiKey });
           const result = await generateText({
-            model: groq("openai/gpt-oss-120b"),
+            model: groq("openai/gpt-oss-20b"),
             messages,
           });
 
