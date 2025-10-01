@@ -114,9 +114,10 @@ export function MenuButton({
 							sometimes draft notes).
 						</p>
 						<p className="text-sm">
-							I skip words when brainstorming. They're on the tip of my tongue
-							but I can't get them out, and I lose my train of thought. I made
-							this so I can keep writing.
+							I skip words or sentences often when I brainstorm. They're on the
+							tip of my tongue but won't come out, and by the time I find them,
+							I've lost my train of thought. So I made Notestorm where I can
+							skip words and keep writing. Hope it helps you stay in flow too.
 						</p>
 						<p className="text-sm text-muted-foreground">
 							Created by{" "}
@@ -128,6 +129,9 @@ export function MenuButton({
 							>
 								Bagas Wastu
 							</a>
+						</p>
+						<p className="text-xs text-muted-foreground">
+							PS: You can use VS Code keybindings too!
 						</p>
 					</div>
 				</DialogContent>
