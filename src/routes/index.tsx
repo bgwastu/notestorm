@@ -19,88 +19,22 @@ import { createFileRoute } from "@tanstack/react-router";
 import { createTheme } from "@uiw/codemirror-themes";
 import CodeMirror, { EditorView, keymap } from "@uiw/react-codemirror";
 import { generateText } from "ai";
-import {
-	useCallback,
-	useEffect,
-	useId,
-	useMemo,
-	useRef,
-	useState,
-} from "react";
-import { toast } from "sonner";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AiButton } from "@/components/ai-button";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import {
-	Dialog,
-	DialogContent,
-	DialogFooter,
-	DialogHeader,
-	DialogTitle,
-} from "@/components/ui/dialog";
-import {
-	Select,
-	SelectContent,
-	SelectItem,
-	SelectTrigger,
-	SelectValue,
-} from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
 import { useEditorPersistence } from "@/hooks/use-editor-persistence";
 import { useSettingsPersistence } from "@/hooks/use-settings-persistence";
 import { aiCompletion } from "@/lib/completion";
-import type { SettingsProvider } from "@/lib/list-model";
 import {
 	createProviderModel,
-	getProviderLabel,
 	isInteractiveElement,
 } from "@/lib/provider-models";
-import { getHotkeyDisplay } from "@/lib/utils";
+import { getHotkeyDisplay, stripReasoningContent } from "@/lib/utils";
 
 const STORAGE_KEY = "editor-state";
 const SETTINGS_STORAGE_KEY = "ai-settings";
 const AI_COMPLETION_HOTKEY = "Mod-i";
 const AUTO_TRIGGER_DELAY = 500;
 const stateFields = { history: historyField };
-
-function stripReasoningContent(text: string) {
-	let result = text;
-	let lower = result.toLowerCase();
-	const startTag = "<think>";
-	const endTag = "</think>";
-	while (true) {
-		const startIndex = lower.indexOf(startTag);
-		if (startIndex === -1) {
-			break;
-		}
-		const endIndex = lower.indexOf(endTag, startIndex + startTag.length);
-		if (endIndex === -1) {
-			result = result.slice(0, startIndex);
-			break;
-		}
-		result =
-			result.slice(0, startIndex) + result.slice(endIndex + endTag.length);
-		lower = result.toLowerCase();
-	}
-	result = result.trimStart();
-	while (true) {
-		const lowered = result.toLowerCase();
-		if (lowered.startsWith("thinking:")) {
-			const nextBreak = result.indexOf("\n");
-			result = nextBreak === -1 ? "" : result.slice(nextBreak + 1);
-			result = result.trimStart();
-			continue;
-		}
-		if (lowered.startsWith("thought:")) {
-			const nextBreak = result.indexOf("\n");
-			result = nextBreak === -1 ? "" : result.slice(nextBreak + 1);
-			result = result.trimStart();
-			continue;
-		}
-		break;
-	}
-	return result.trimStart();
-}
 
 const theme = createTheme({
 	theme: "light",
@@ -133,15 +67,9 @@ function Home() {
 	const os = useOs();
 	const editorRef = useRef<EditorView | null>(null);
 	const [isPopoverOpen, setIsPopoverOpen] = useState(false);
-	const [isSettingsOpen, setIsSettingsOpen] = useState(false);
-	const [isTestingKey, setIsTestingKey] = useState(false);
-	const providerId = useId();
-	const modelId = useId();
-	const apiKeyId = useId();
-	const demoApiId = useId();
-	const autoGenerationId = useId();
 	const { value, setValue, initialState, isReady, persistState } =
 		useEditorPersistence(STORAGE_KEY, stateFields);
+	const settingsHook = useSettingsPersistence(SETTINGS_STORAGE_KEY);
 	const {
 		provider,
 		activeEntry,
@@ -155,9 +83,8 @@ function Home() {
 		setApiKey,
 		setUseDemoApi,
 		setAutoGenerationEnabled,
-	} = useSettingsPersistence(SETTINGS_STORAGE_KEY);
+	} = settingsHook;
 	const activeApiKey = activeEntry.apiKey;
-	const isTestDisabled = isTestingKey || !activeApiKey || !activeModel;
 	const useDemoApi = demo.useDemoApi;
 
 	const isMobile = useMemo(() => {
@@ -167,36 +94,6 @@ function Home() {
 	const hotkeyDisplay = useMemo(() => {
 		return getHotkeyDisplay(AI_COMPLETION_HOTKEY, os);
 	}, [os]);
-
-	const handleTestApiKey = useCallback(async () => {
-		if (!activeApiKey) {
-			toast.error("Add an API key before testing it.");
-			return;
-		}
-		if (!activeModel) {
-			toast.error("Select a model before running the test.");
-			return;
-		}
-		setIsTestingKey(true);
-		const providerLabel = getProviderLabel(provider);
-		try {
-			const model = await createProviderModel(
-				provider,
-				activeApiKey,
-				activeModel.apiModelId,
-			);
-			await generateText({
-				model,
-				prompt: "Test",
-			});
-			toast.success(`${providerLabel} - ${activeModel.name} API key works.`);
-		} catch (error) {
-			const message = error instanceof Error ? error.message : "Unknown error";
-			toast.error(`${providerLabel} API key test failed: ${message}`);
-		} finally {
-			setIsTestingKey(false);
-		}
-	}, [activeApiKey, activeModel, provider]);
 
 	const handleChange = useCallback(
 		(nextValue: string, viewUpdate: ViewUpdate) => {
@@ -246,7 +143,9 @@ function Home() {
 			}),
 			aiCompletion({
 				hotkey: AI_COMPLETION_HOTKEY,
-				autoTriggerDelay: autoGeneration.enabled ? AUTO_TRIGGER_DELAY : undefined,
+				autoTriggerDelay: autoGeneration.enabled
+					? AUTO_TRIGGER_DELAY
+					: undefined,
 				suppressAutoErrors: autoGeneration.enabled,
 				command:
 					"Write the continuation that fits between the provided prefix and suffix. Mirror the user's emotional tone, voice, and pacing. Avoid repeating suffix content. Limit to 30 words and allow incomplete endings.",
@@ -293,8 +192,7 @@ Output the inserted content only, do not explain. Please mind the spacing and in
 						}
 
 						const data = await response.json();
-						const sanitized = stripReasoningContent(data.text);
-						onTextChange(sanitized);
+						onTextChange(stripReasoningContent(data.text));
 					} else {
 						if (!activeApiKey) {
 							throw new Error("Add an API key in Settings.");
@@ -325,19 +223,12 @@ Output the inserted content only, do not explain. Please mind the spacing and in
 `.trim(),
 							abortSignal,
 						});
-						const sanitized = stripReasoningContent(response.text);
-						onTextChange(sanitized);
+						onTextChange(stripReasoningContent(response.text));
 					}
 				},
 			}),
 		],
-		[
-			activeApiKey,
-			activeModel,
-			provider,
-			useDemoApi,
-			autoGeneration.enabled,
-		],
+		[activeApiKey, activeModel, provider, useDemoApi, autoGeneration.enabled],
 	);
 
 	if (!isReady || !isSettingsReady) {
@@ -352,136 +243,21 @@ Output the inserted content only, do not explain. Please mind the spacing and in
 					<AiButton
 						isPopoverOpen={isPopoverOpen}
 						onPopoverOpenChange={setIsPopoverOpen}
-						onSettingsClick={() => setIsSettingsOpen(true)}
 						hotkeyDisplay={hotkeyDisplay}
 						isMobile={isMobile}
 						autoTriggerDelay={AUTO_TRIGGER_DELAY}
+						provider={provider}
+						activeEntry={activeEntry}
+						models={models}
+						activeModel={activeModel}
+						demo={demo}
+						autoGeneration={autoGeneration}
+						selectProvider={selectProvider}
+						setModelId={setModelId}
+						setApiKey={setApiKey}
+						setUseDemoApi={setUseDemoApi}
+						setAutoGenerationEnabled={setAutoGenerationEnabled}
 					/>
-					<Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
-						<DialogContent>
-							<DialogHeader>
-								<DialogTitle>Settings</DialogTitle>
-							</DialogHeader>
-							<div className="flex flex-col gap-4">
-								<div className="flex items-center gap-2">
-									<Checkbox
-										id={demoApiId}
-										checked={useDemoApi}
-										onCheckedChange={(checked) =>
-											setUseDemoApi(checked === true)
-										}
-									/>
-									<label
-										htmlFor={demoApiId}
-										className="text-sm font-medium text-foreground cursor-pointer"
-									>
-										Use Demo API
-									</label>
-								</div>
-								<div className="flex items-center justify-between">
-									<label
-										htmlFor={autoGenerationId}
-										className="text-sm font-medium text-foreground cursor-pointer"
-									>
-										Auto-generate on pause
-									</label>
-									<Switch
-										id={autoGenerationId}
-										checked={autoGeneration.enabled}
-										onCheckedChange={(checked) =>
-											setAutoGenerationEnabled(checked)
-										}
-									/>
-								</div>
-								<div className="flex flex-col gap-2">
-									<label
-										htmlFor={providerId}
-										className="text-sm font-medium text-foreground"
-									>
-										Provider
-									</label>
-									<Select
-										value={provider}
-										onValueChange={(value) =>
-											selectProvider(value as SettingsProvider)
-										}
-										disabled={useDemoApi}
-									>
-										<SelectTrigger id={providerId} className="w-full">
-											<SelectValue placeholder="Select provider" />
-										</SelectTrigger>
-										<SelectContent>
-											<SelectItem value="groq">Groq</SelectItem>
-											<SelectItem value="google">Google</SelectItem>
-											<SelectItem value="anthropic">Anthropic</SelectItem>
-											<SelectItem value="openai">OpenAI</SelectItem>
-											<SelectItem value="openrouter">OpenRouter</SelectItem>
-										</SelectContent>
-									</Select>
-								</div>
-								<div className="flex flex-col gap-2">
-									<label
-										htmlFor={modelId}
-										className="text-sm font-medium text-foreground"
-									>
-										Model
-									</label>
-									<Select
-										value={activeEntry.modelId}
-										onValueChange={(value) => setModelId(value)}
-										disabled={!models.length || useDemoApi}
-									>
-										<SelectTrigger id={modelId} className="w-full">
-											<SelectValue
-												placeholder={
-													models.length ? "Select model" : "No models available"
-												}
-											/>
-										</SelectTrigger>
-										<SelectContent>
-											{models.length ? (
-												models.map((model) => (
-													<SelectItem key={model.id} value={model.id}>
-														{model.name}
-													</SelectItem>
-												))
-											) : (
-												<SelectItem value="" disabled>
-													No models available
-												</SelectItem>
-											)}
-										</SelectContent>
-									</Select>
-								</div>
-								<div className="flex flex-col gap-2">
-									<label
-										htmlFor={apiKeyId}
-										className="text-sm font-medium text-foreground"
-									>
-										API Key
-									</label>
-									<input
-										id={apiKeyId}
-										type="password"
-										value={activeApiKey}
-										onChange={(event) => setApiKey(event.target.value)}
-										className="border border-input rounded-md px-3 py-2 bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring"
-										placeholder="Enter your API key"
-										autoComplete="off"
-										disabled={useDemoApi}
-									/>
-								</div>
-							</div>
-							<DialogFooter>
-								<Button
-									onClick={handleTestApiKey}
-									disabled={isTestDisabled || useDemoApi}
-								>
-									{isTestingKey ? "Testing..." : "Test API Key"}
-								</Button>
-							</DialogFooter>
-						</DialogContent>
-					</Dialog>
 				</div>
 			</div>
 			<CodeMirror

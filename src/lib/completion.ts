@@ -331,19 +331,28 @@ const autoTriggerPlugin = ViewPlugin.fromClass(
       const handleInput = () => {
         this.clearAutoTriggerTimer();
 
-        // Check if we're at the end of a sentence (simple heuristic)
+        // Check if we're at the end of a sentence or word boundary
         const { state } = view;
         const { to } = state.selection.main;
         const text = state.doc.toString();
         const charBeforeCursor = to > 0 ? text[to - 1] : "";
 
-        // Only auto-trigger at end of sentences or after spaces
-        if (
-          charBeforeCursor === "." ||
-          charBeforeCursor === "!" ||
-          charBeforeCursor === "?" ||
-          charBeforeCursor === " "
-        ) {
+        // Look at character after the cursor
+        const charAfterCursor = to < text.length ? text[to] : "";
+
+        // Only auto-trigger at end of sentences or after spaces (word boundaries)
+        // But NOT in the middle of a word (when next char is a letter)
+        const isAtWordBoundary = (
+          // End of sentence
+          ((charBeforeCursor === "." || charBeforeCursor === "!" || charBeforeCursor === "?") &&
+           (charAfterCursor === "" || charAfterCursor === " " || charAfterCursor === "\n")) ||
+          // After a space, but not if we're in the middle of a word
+          (charBeforeCursor === " " &&
+           (charAfterCursor === "" || charAfterCursor === " " || charAfterCursor === "\n" ||
+            /[.!?,;:\-—]/.test(charAfterCursor)))
+        );
+
+        if (isAtWordBoundary) {
           this.autoTriggerTimer = window.setTimeout(() => {
             this.triggerAutoCompletion(view);
           }, autoTriggerDelay);
@@ -517,9 +526,7 @@ function generateAutoTrigger(view: EditorView) {
     }
   });
 
-  view.dispatch({
-    effects: [CompletionEffect.of({ text: null, doc, loading: true })],
-  });
+  // Don't show loading spinner for auto-triggered completions
 }
 
 function createKeymapExtension(hotkey: string) {
