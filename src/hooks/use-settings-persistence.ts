@@ -186,7 +186,7 @@ export function useSettingsPersistence(storageKey: string) {
           ...previous.entries,
           [provider]: normalizeEntry(provider, previous.entries[provider]),
         };
-        return { provider, entries };
+        return { ...previous, provider, entries };
       });
     },
     [commit]
@@ -202,6 +202,7 @@ export function useSettingsPersistence(storageKey: string) {
           modelId: ensureModelId(provider, modelId),
         };
         return {
+          ...previous,
           provider,
           entries: {
             ...previous.entries,
@@ -223,6 +224,7 @@ export function useSettingsPersistence(storageKey: string) {
           apiKey,
         };
         return {
+          ...previous,
           provider,
           entries: {
             ...previous.entries,
