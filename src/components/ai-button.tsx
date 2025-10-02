@@ -1,6 +1,6 @@
 import { generateText } from "ai";
-import { Clock, Loader2, ShieldCheck } from "lucide-react";
-import { useCallback, useId, useState } from "react";
+import { Bot, Clock, Key, Loader2, ShieldCheck, Sparkles } from "lucide-react";
+import { useCallback, useEffect, useId, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,6 +15,7 @@ import {
 	PopoverContent,
 	PopoverTrigger,
 } from "@/components/ui/popover";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
 	Select,
 	SelectContent,
@@ -24,6 +25,7 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import type { ProviderModel, SettingsProvider } from "@/lib/list-model";
+import { checkPromptApiSupport } from "@/lib/prompt-api";
 import {
 	createProviderModel,
 	getDisabledThinkingOptions,
@@ -46,12 +48,13 @@ interface AiButtonProps {
 	activeEntry: { modelId: string; apiKey: string };
 	models: Array<{ id: string; name: string }>;
 	activeModel: ProviderModel | undefined;
-	demo: { useDemoApi: boolean };
+	demo: { useDemoApi: boolean; aiMode: "demo" | "local" | "chrome" };
 	autoGeneration: { enabled: boolean };
 	selectProvider: (provider: SettingsProvider) => void;
 	setModelId: (modelId: string) => void;
 	setApiKey: (apiKey: string) => void;
 	setUseDemoApi: (useDemoApi: boolean) => void;
+	setAiMode: (mode: "demo" | "local" | "chrome") => void;
 	setAutoGenerationEnabled: (enabled: boolean) => void;
 }
 
@@ -73,10 +76,18 @@ export function AiButton({
 	setModelId,
 	setApiKey,
 	setUseDemoApi,
+	setAiMode,
 	setAutoGenerationEnabled,
 }: AiButtonProps) {
 	const [internalIsSettingsOpen, setInternalIsSettingsOpen] = useState(false);
 	const [isTestingKey, setIsTestingKey] = useState(false);
+	const [chromeAiSupported, setChromeAiSupported] = useState(false);
+
+	useEffect(() => {
+		checkPromptApiSupport().then((result) => {
+			setChromeAiSupported(result.supported);
+		});
+	}, []);
 
 	const isSettingsOpen = externalIsSettingsOpen ?? internalIsSettingsOpen;
 	const setIsSettingsOpen =
@@ -86,10 +97,13 @@ export function AiButton({
 	const apiKeyId = useId();
 	const demoApiId = useId();
 	const autoGenerationId = useId();
+	const modeDemoId = useId();
+	const modeChromeId = useId();
+	const modeLocalId = useId();
 
 	const activeApiKey = activeEntry.apiKey;
 	const isTestDisabled = isTestingKey || !activeApiKey || !activeModel;
-	const useDemoApi = demo?.useDemoApi ?? false;
+	const aiMode = demo?.aiMode ?? "demo";
 
 	const handleTestApiKey = useCallback(async () => {
 		if (!activeApiKey) {
@@ -223,15 +237,63 @@ export function AiButton({
 								onCheckedChange={(checked) => setAutoGenerationEnabled(checked)}
 							/>
 						</div>
-						<div className="flex items-center justify-between">
-							<Label htmlFor={demoApiId} className="cursor-pointer">
-								Use Demo API instead
-							</Label>
-							<Switch
-								id={demoApiId}
-								checked={useDemoApi}
-								onCheckedChange={(checked) => setUseDemoApi(checked)}
-							/>
+						<div className="flex flex-col gap-3">
+							<Label>AI Mode</Label>
+							<RadioGroup
+								value={aiMode}
+								onValueChange={(value) =>
+									setAiMode(value as "demo" | "local" | "chrome")
+								}
+								className="gap-3"
+							>
+								<Label
+									htmlFor={modeDemoId}
+									className="flex items-center gap-3 rounded-lg border p-3 cursor-pointer hover:bg-accent/50 has-[[data-state=checked]]:border-foreground has-[[data-state=checked]]:bg-accent"
+								>
+									<RadioGroupItem value="demo" id={modeDemoId} />
+									<div className="flex items-center gap-2 flex-1">
+										<Sparkles className="w-4 h-4 text-muted-foreground" />
+										<div className="grid gap-0.5">
+											<p className="text-sm font-medium">Demo API</p>
+											<p className="text-xs text-muted-foreground">
+												Free demo (rate limited)
+											</p>
+										</div>
+									</div>
+								</Label>
+								{chromeAiSupported && (
+									<Label
+										htmlFor={modeChromeId}
+										className="flex items-center gap-3 rounded-lg border p-3 cursor-pointer hover:bg-accent/50 has-[[data-state=checked]]:border-foreground has-[[data-state=checked]]:bg-accent"
+									>
+										<RadioGroupItem value="chrome" id={modeChromeId} />
+										<div className="flex items-center gap-2 flex-1">
+											<Bot className="w-4 h-4 text-muted-foreground" />
+											<div className="grid gap-0.5">
+												<p className="text-sm font-medium">Chrome AI</p>
+												<p className="text-xs text-muted-foreground">
+													Built-in AI (free, offline)
+												</p>
+											</div>
+										</div>
+									</Label>
+								)}
+								<Label
+									htmlFor={modeLocalId}
+									className="flex items-center gap-3 rounded-lg border p-3 cursor-pointer hover:bg-accent/50 has-[[data-state=checked]]:border-foreground has-[[data-state=checked]]:bg-accent"
+								>
+									<RadioGroupItem value="local" id={modeLocalId} />
+									<div className="flex items-center gap-2 flex-1">
+										<Key className="w-4 h-4 text-muted-foreground" />
+										<div className="grid gap-0.5">
+											<p className="text-sm font-medium">Local Setup</p>
+											<p className="text-xs text-muted-foreground">
+												Your own API key
+											</p>
+										</div>
+									</div>
+								</Label>
+							</RadioGroup>
 						</div>
 						<div className="flex flex-col gap-2">
 							<Label htmlFor={providerId}>Provider</Label>
@@ -240,7 +302,7 @@ export function AiButton({
 								onValueChange={(value) =>
 									selectProvider(value as SettingsProvider)
 								}
-								disabled={useDemoApi}
+								disabled={aiMode !== "local"}
 							>
 								<SelectTrigger id={providerId} className="w-full">
 									<SelectValue placeholder="Select provider" />
@@ -259,7 +321,7 @@ export function AiButton({
 							<Select
 								value={activeEntry.modelId}
 								onValueChange={(value) => setModelId(value)}
-								disabled={!models.length || useDemoApi}
+								disabled={!models.length || aiMode !== "local"}
 							>
 								<SelectTrigger id={modelId} className="w-full">
 									<SelectValue
@@ -303,13 +365,13 @@ export function AiButton({
 								className="border border-input rounded-md px-3 py-2 bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring focus:border-ring"
 								placeholder="Enter your API key"
 								autoComplete="off"
-								disabled={useDemoApi}
+								disabled={aiMode !== "local"}
 							/>
 							<div className="flex items-center justify-between">
 								<button
 									type="button"
 									onClick={handleTestApiKey}
-									disabled={isTestDisabled || useDemoApi}
+									disabled={isTestDisabled || aiMode !== "local"}
 									className={cn(
 										"text-sm font-medium hover:text-foreground transition-colors disabled:opacity-50 disabled:cursor-not-allowed",
 										{

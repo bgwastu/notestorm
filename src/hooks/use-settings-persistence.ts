@@ -14,8 +14,11 @@ type ProviderPreference = {
 
 type ProviderPreferences = Record<SettingsProvider, ProviderPreference>;
 
+type AiMode = "demo" | "local" | "chrome";
+
 type DemoSettings = {
   useDemoApi: boolean;
+  aiMode: AiMode;
 };
 
 type AutoGenerationSettings = {
@@ -38,6 +41,10 @@ type OnboardingSettings = {
   hasSeenOnboarding: boolean;
 };
 
+type ChromeFeaturesSettings = {
+  hasSeenChromeFeatures: boolean;
+};
+
 const PROVIDERS: SettingsProvider[] = [
   "groq",
   "google",
@@ -56,6 +63,7 @@ export type SettingsState = {
   aiFeature: AiFeatureSettings;
   rewriter: RewriterSettings;
   onboarding: OnboardingSettings;
+  chromeFeatures: ChromeFeaturesSettings;
 };
 
 type StoredSettings = Partial<{
@@ -70,6 +78,7 @@ type StoredSettings = Partial<{
   aiFeature: Partial<AiFeatureSettings>;
   rewriter: Partial<RewriterSettings>;
   onboarding: Partial<OnboardingSettings>;
+  chromeFeatures: Partial<ChromeFeaturesSettings>;
 }>;
 
 function listProviderModels(provider: SettingsProvider) {
@@ -115,12 +124,13 @@ function createDefaultState(isMobile?: boolean): SettingsState {
   return {
     provider: DEFAULT_PROVIDER,
     entries: createDefaultEntries(),
-    demo: { useDemoApi: false },
+    demo: { useDemoApi: false, aiMode: "demo" },
     autoGeneration: { enabled: isMobile ?? false },
     spellcheck: { enabled: false },
     aiFeature: { enabled: true },
     rewriter: { enabled: false },
     onboarding: { hasSeenOnboarding: false },
+    chromeFeatures: { hasSeenChromeFeatures: false },
   };
 }
 
@@ -157,6 +167,7 @@ function normalizeSettings(raw: StoredSettings | undefined, isMobile?: boolean):
 
   const demo: DemoSettings = {
     useDemoApi: raw.demo?.useDemoApi ?? false,
+    aiMode: raw.demo?.aiMode ?? (raw.demo?.useDemoApi ? "demo" : "local"),
   };
 
   const autoGeneration: AutoGenerationSettings = {
@@ -179,7 +190,11 @@ function normalizeSettings(raw: StoredSettings | undefined, isMobile?: boolean):
     hasSeenOnboarding: raw.onboarding?.hasSeenOnboarding ?? false,
   };
 
-  return { provider, entries, demo, autoGeneration, spellcheck, aiFeature, rewriter, onboarding };
+  const chromeFeatures: ChromeFeaturesSettings = {
+    hasSeenChromeFeatures: raw.chromeFeatures?.hasSeenChromeFeatures ?? false,
+  };
+
+  return { provider, entries, demo, autoGeneration, spellcheck, aiFeature, rewriter, onboarding, chromeFeatures };
 }
 
 export function useSettingsPersistence(storageKey: string, isMobile?: boolean) {
@@ -288,7 +303,17 @@ export function useSettingsPersistence(storageKey: string, isMobile?: boolean) {
     (useDemoApi: boolean) => {
       commit((previous) => ({
         ...previous,
-        demo: { useDemoApi },
+        demo: { ...previous.demo, useDemoApi },
+      }));
+    },
+    [commit]
+  );
+
+  const setAiMode = useCallback(
+    (aiMode: AiMode) => {
+      commit((previous) => ({
+        ...previous,
+        demo: { ...previous.demo, aiMode, useDemoApi: aiMode === "demo" },
       }));
     },
     [commit]
@@ -344,6 +369,16 @@ export function useSettingsPersistence(storageKey: string, isMobile?: boolean) {
     [commit]
   );
 
+  const setHasSeenChromeFeatures = useCallback(
+    (hasSeenChromeFeatures: boolean) => {
+      commit((previous) => ({
+        ...previous,
+        chromeFeatures: { hasSeenChromeFeatures },
+      }));
+    },
+    [commit]
+  );
+
   const provider = settings.provider;
   const entries = settings.entries;
   const activeEntry = entries[provider];
@@ -353,6 +388,7 @@ export function useSettingsPersistence(storageKey: string, isMobile?: boolean) {
   const aiFeature = settings.aiFeature;
   const rewriter = settings.rewriter;
   const onboarding = settings.onboarding;
+  const chromeFeatures = settings.chromeFeatures;
 
   const models = useMemo(() => listProviderModels(provider), [provider]);
 
@@ -373,16 +409,19 @@ export function useSettingsPersistence(storageKey: string, isMobile?: boolean) {
     aiFeature,
     rewriter,
     onboarding,
+    chromeFeatures,
     isReady,
     selectProvider,
     setModelId,
     setApiKey,
     setUseDemoApi,
+    setAiMode,
     setAutoGenerationEnabled,
     setSpellcheckEnabled,
     setAiFeatureEnabled,
     setRewriterEnabled,
     setHasSeenOnboarding,
+    setHasSeenChromeFeatures,
     resetSettings,
   };
 }

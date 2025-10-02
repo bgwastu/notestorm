@@ -63,15 +63,22 @@ export function MenuButton({
 				}
 			} else if (!result.supported) {
 				onRewriterToggle(false);
-				toast.error(
-					`Rewriter API not available. Enable chrome://flags/#rewriter-api-for-gemini-nano in Chrome ${MINIMUM_CHROME_VERSION}+`,
-					{
-						duration: 8000,
-					},
-				);
 			}
 		});
 	}, [hasCheckedSupport, onRewriterToggle]);
+
+	const handleRewriterToggle = (checked: boolean) => {
+		if (!rewriterSupported) {
+			toast.error(
+				`Rewriter API is only available in Chrome ${MINIMUM_CHROME_VERSION}+`,
+				{
+					duration: 8000,
+				},
+			);
+			return;
+		}
+		onRewriterToggle(checked);
+	};
 
 	const handleSubmitFeedback = async () => {
 		if (!feedback.trim()) return;
@@ -121,8 +128,7 @@ export function MenuButton({
 					</DropdownMenuCheckboxItem>
 					<DropdownMenuCheckboxItem
 						checked={rewriterEnabled}
-						onCheckedChange={onRewriterToggle}
-						disabled={!rewriterSupported}
+						onCheckedChange={handleRewriterToggle}
 					>
 						Rewriter {!rewriterSupported && "(Not Supported)"}
 					</DropdownMenuCheckboxItem>
