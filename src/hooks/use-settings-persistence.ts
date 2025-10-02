@@ -30,6 +30,10 @@ type AiFeatureSettings = {
   enabled: boolean;
 };
 
+type RewriterSettings = {
+  enabled: boolean;
+};
+
 type OnboardingSettings = {
   hasSeenOnboarding: boolean;
 };
@@ -50,6 +54,7 @@ export type SettingsState = {
   autoGeneration: AutoGenerationSettings;
   spellcheck: SpellcheckSettings;
   aiFeature: AiFeatureSettings;
+  rewriter: RewriterSettings;
   onboarding: OnboardingSettings;
 };
 
@@ -63,6 +68,7 @@ type StoredSettings = Partial<{
   autoGeneration: Partial<AutoGenerationSettings>;
   spellcheck: Partial<SpellcheckSettings>;
   aiFeature: Partial<AiFeatureSettings>;
+  rewriter: Partial<RewriterSettings>;
   onboarding: Partial<OnboardingSettings>;
 }>;
 
@@ -113,6 +119,7 @@ function createDefaultState(isMobile?: boolean): SettingsState {
     autoGeneration: { enabled: isMobile ?? false },
     spellcheck: { enabled: false },
     aiFeature: { enabled: true },
+    rewriter: { enabled: false },
     onboarding: { hasSeenOnboarding: false },
   };
 }
@@ -164,11 +171,15 @@ function normalizeSettings(raw: StoredSettings | undefined, isMobile?: boolean):
     enabled: raw.aiFeature?.enabled ?? true,
   };
 
+  const rewriter: RewriterSettings = {
+    enabled: raw.rewriter?.enabled ?? false,
+  };
+
   const onboarding: OnboardingSettings = {
     hasSeenOnboarding: raw.onboarding?.hasSeenOnboarding ?? false,
   };
 
-  return { provider, entries, demo, autoGeneration, spellcheck, aiFeature, onboarding };
+  return { provider, entries, demo, autoGeneration, spellcheck, aiFeature, rewriter, onboarding };
 }
 
 export function useSettingsPersistence(storageKey: string, isMobile?: boolean) {
@@ -313,6 +324,16 @@ export function useSettingsPersistence(storageKey: string, isMobile?: boolean) {
     [commit]
   );
 
+  const setRewriterEnabled = useCallback(
+    (enabled: boolean) => {
+      commit((previous) => ({
+        ...previous,
+        rewriter: { enabled },
+      }));
+    },
+    [commit]
+  );
+
   const setHasSeenOnboarding = useCallback(
     (hasSeenOnboarding: boolean) => {
       commit((previous) => ({
@@ -330,6 +351,7 @@ export function useSettingsPersistence(storageKey: string, isMobile?: boolean) {
   const autoGeneration = settings.autoGeneration;
   const spellcheck = settings.spellcheck;
   const aiFeature = settings.aiFeature;
+  const rewriter = settings.rewriter;
   const onboarding = settings.onboarding;
 
   const models = useMemo(() => listProviderModels(provider), [provider]);
@@ -349,6 +371,7 @@ export function useSettingsPersistence(storageKey: string, isMobile?: boolean) {
     autoGeneration,
     spellcheck,
     aiFeature,
+    rewriter,
     onboarding,
     isReady,
     selectProvider,
@@ -358,6 +381,7 @@ export function useSettingsPersistence(storageKey: string, isMobile?: boolean) {
     setAutoGenerationEnabled,
     setSpellcheckEnabled,
     setAiFeatureEnabled,
+    setRewriterEnabled,
     setHasSeenOnboarding,
     resetSettings,
   };

@@ -1,5 +1,5 @@
 import { MoreVertical } from "lucide-react";
-import { useId, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,12 +18,15 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Textarea } from "@/components/ui/textarea";
+import { checkRewriterSupport, MINIMUM_CHROME_VERSION } from "@/lib/rewriter";
 
 interface MenuButtonProps {
 	spellcheckEnabled: boolean;
 	onSpellcheckToggle: (enabled: boolean) => void;
 	aiFeatureEnabled: boolean;
 	onAiFeatureToggle: (enabled: boolean) => void;
+	rewriterEnabled: boolean;
+	onRewriterToggle: (enabled: boolean) => void;
 }
 
 export function MenuButton({
@@ -31,12 +34,44 @@ export function MenuButton({
 	onSpellcheckToggle,
 	aiFeatureEnabled,
 	onAiFeatureToggle,
+	rewriterEnabled,
+	onRewriterToggle,
 }: MenuButtonProps) {
 	const [isAboutOpen, setIsAboutOpen] = useState(false);
 	const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
 	const [feedback, setFeedback] = useState("");
 	const [isSubmitting, setIsSubmitting] = useState(false);
+	const [rewriterSupported, setRewriterSupported] = useState(false);
+	const [hasCheckedSupport, setHasCheckedSupport] = useState(false);
 	const feedbackInputId = useId();
+
+	useEffect(() => {
+		if (hasCheckedSupport) return;
+
+		checkRewriterSupport().then((result) => {
+			setRewriterSupported(result.supported);
+			setHasCheckedSupport(true);
+			if (result.supported) {
+				onRewriterToggle(true);
+				if (result.available === "downloadable") {
+					toast.info(
+						"Rewriter AI model is downloading in the background. This may take a few minutes.",
+						{
+							duration: 6000,
+						},
+					);
+				}
+			} else if (!result.supported) {
+				onRewriterToggle(false);
+				toast.error(
+					`Rewriter API not available. Enable chrome://flags/#rewriter-api-for-gemini-nano in Chrome ${MINIMUM_CHROME_VERSION}+`,
+					{
+						duration: 8000,
+					},
+				);
+			}
+		});
+	}, [hasCheckedSupport, onRewriterToggle]);
 
 	const handleSubmitFeedback = async () => {
 		if (!feedback.trim()) return;
@@ -83,6 +118,13 @@ export function MenuButton({
 						onCheckedChange={onAiFeatureToggle}
 					>
 						AI Feature
+					</DropdownMenuCheckboxItem>
+					<DropdownMenuCheckboxItem
+						checked={rewriterEnabled}
+						onCheckedChange={onRewriterToggle}
+						disabled={!rewriterSupported}
+					>
+						Rewriter {!rewriterSupported && "(Not Supported)"}
 					</DropdownMenuCheckboxItem>
 					<DropdownMenuCheckboxItem
 						checked={spellcheckEnabled}
