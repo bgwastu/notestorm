@@ -1,5 +1,5 @@
 import { generateText } from "ai";
-import { Loader2, ShieldCheck, WandSparkles } from "lucide-react";
+import { Clock, Loader2, ShieldCheck } from "lucide-react";
 import { useCallback, useId, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -23,8 +23,12 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import type { SettingsProvider } from "@/lib/list-model";
-import { createProviderModel, getProviderLabel } from "@/lib/provider-models";
+import type { ProviderModel, SettingsProvider } from "@/lib/list-model";
+import {
+	createProviderModel,
+	getDisabledThinkingOptions,
+	getProviderLabel,
+} from "@/lib/provider-models";
 import { cn } from "@/lib/utils";
 
 interface AiButtonProps {
@@ -41,7 +45,7 @@ interface AiButtonProps {
 	provider: SettingsProvider;
 	activeEntry: { modelId: string; apiKey: string };
 	models: Array<{ id: string; name: string }>;
-	activeModel: { name: string; apiModelId: string } | undefined;
+	activeModel: ProviderModel | undefined;
 	demo: { useDemoApi: boolean };
 	autoGeneration: { enabled: boolean };
 	selectProvider: (provider: SettingsProvider) => void;
@@ -107,6 +111,7 @@ export function AiButton({
 			await generateText({
 				model,
 				prompt: "Test",
+				providerOptions: getDisabledThinkingOptions(provider, activeModel),
 			});
 			toast.success(`${providerLabel} - ${activeModel.name} API key works.`);
 		} catch (error) {
@@ -278,6 +283,15 @@ export function AiButton({
 								</SelectContent>
 							</Select>
 						</div>
+						{activeModel?.hasReasoning && (
+							<div className="flex items-start gap-2 p-3 rounded-md bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800">
+								<Clock className="w-4 h-4 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
+								<p className="text-xs text-blue-600 dark:text-blue-400">
+									This model supports advanced reasoning which may take longer to
+									respond. Thinking/reasoning is disabled for faster responses.
+								</p>
+							</div>
+						)}
 						<div className="flex flex-col gap-2">
 							<Label htmlFor={apiKeyId}>API Key</Label>
 							<input

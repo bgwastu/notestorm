@@ -29,6 +29,7 @@ import { aiCompletion } from "@/lib/completion";
 import {
 	createProviderModel,
 	isInteractiveElement,
+	getDisabledThinkingOptions,
 } from "@/lib/provider-models";
 import { getHotkeyDisplay, stripReasoningContent } from "@/lib/utils";
 
@@ -245,6 +246,7 @@ USERCOMMAND: ${promptParams.command}
 Output the inserted content only, do not explain. Please mind the spacing and indentation.
 `.trim(),
 							abortSignal,
+							providerOptions: getDisabledThinkingOptions(provider, activeModel),
 						});
 						onTextChange(stripReasoningContent(response.text));
 					}

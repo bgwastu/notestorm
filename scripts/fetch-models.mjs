@@ -16,6 +16,14 @@ const SUPPORTED_PREFIXES = new Map([
 const PROVIDER_ORDER = ["groq", "google", "anthropic", "openai", "openrouter"];
 const IGNORED_SUFFIXES = ["-thinking"];
 
+// Models known to support reasoning/thinking based on AI SDK documentation
+// even if not flagged in the Chatwise API response
+const KNOWN_REASONING_MODELS = new Set([
+  "gemini-2.5-pro",
+  "gemini-2.5-pro-preview-06-05",
+  "gemini-2.0-flash",
+]);
+
 async function fetchJson(url) {
   const response = await fetch(url);
   if (!response.ok) {
@@ -61,14 +69,24 @@ function normalizeChatwiseModels(rawModels) {
     if (seen.has(id)) {
       continue;
     }
+    const apiModelId =
+      typeof model.apiModelId === "string" && model.apiModelId
+        ? model.apiModelId
+        : id;
+
+    // Check if model supports reasoning
+    // 1. Models with reasoning: true in API (primary source)
+    // 2. Models in KNOWN_REASONING_MODELS (exception list based on AI SDK docs)
+    const hasReasoning =
+      model.capabilities?.reasoning === true ||
+      KNOWN_REASONING_MODELS.has(apiModelId);
+
     const entry = {
       id,
       provider,
       name: typeof model.name === "string" && model.name ? model.name : id,
-      apiModelId:
-        typeof model.apiModelId === "string" && model.apiModelId
-          ? model.apiModelId
-          : id,
+      apiModelId,
+      hasReasoning,
     };
     entries.push(entry);
     seen.add(id);
@@ -105,6 +123,7 @@ function normalizeOpenRouterModels(rawModels) {
       provider: "openrouter",
       name,
       apiModelId,
+      hasReasoning: false,
     });
   }
 
@@ -143,11 +162,12 @@ function generateSource(models) {
     provider: "${model.provider}",
     name: "${model.name.replace(/"/g, '\\"')}",
     apiModelId: "${model.apiModelId}",
+    hasReasoning: ${model.hasReasoning},
   },`,
     )
     .join("\n");
 
-  return `export type SettingsProvider =\n${providerUnion};\n\nexport type ProviderModel = {\n  id: string;\n  provider: SettingsProvider;\n  name: string;\n  apiModelId: string;\n};\n\nconst MODELS: ProviderModel[] = [\n${modelEntries}\n];\n\nexport function listModels() {\n  return MODELS;\n}\n\nexport function listModelsByProvider(provider: SettingsProvider) {\n  return MODELS.filter((model) => model.provider === provider);\n}\n\nexport function findModelById(id: string) {\n  return MODELS.find((model) => model.id === id);\n}\n`;
+  return `export type SettingsProvider =\n${providerUnion};\n\nexport type ProviderModel = {\n  id: string;\n  provider: SettingsProvider;\n  name: string;\n  apiModelId: string;\n  hasReasoning: boolean;\n};\n\nconst MODELS: ProviderModel[] = [\n${modelEntries}\n];\n\nexport function listModels() {\n  return MODELS;\n}\n\nexport function listModelsByProvider(provider: SettingsProvider) {\n  return MODELS.filter((model) => model.provider === provider);\n}\n\nexport function findModelById(id: string) {\n  return MODELS.find((model) => model.id === id);\n}\n\nexport function modelSupportsReasoning(model: ProviderModel): boolean {\n  return model.hasReasoning;\n}\n`;
 }
 
 async function main() {

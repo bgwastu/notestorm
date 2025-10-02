@@ -1,5 +1,5 @@
-import type { LanguageModelV1 } from "ai";
-import type { SettingsProvider } from "@/lib/list-model";
+import type { LanguageModel } from "ai";
+import type { ProviderModel, SettingsProvider } from "@/lib/list-model";
 
 const PROVIDER_LABELS = {
   groq: "Groq",
@@ -30,7 +30,7 @@ export function getProviderLabel(provider: SettingsProvider) {
   return PROVIDER_LABELS[provider];
 }
 
-type ProviderFactory = (apiKey: string) => (modelId: string) => LanguageModelV1;
+type ProviderFactory = (apiKey: string) => (modelId: string) => LanguageModel;
 
 async function loadProviderFactory(provider: SettingsProvider): Promise<ProviderFactory> {
   switch (provider) {
@@ -73,6 +73,30 @@ export async function createProviderModel(
 ) {
   const factory = await loadProviderFactory(provider);
   return factory(apiKey)(modelId);
+}
+
+export function getDisabledThinkingOptions(provider: SettingsProvider, model?: ProviderModel): any {
+  // If model is provided and doesn't support reasoning, don't need to disable it
+  if (model && !model.hasReasoning) {
+    return undefined;
+  }
+
+  switch (provider) {
+    case "groq":
+      return { groq: { structuredOutputs: false } };
+    case "google":
+      return { google: { thinkingConfig: { thinkingBudget: 0 } } };
+    case "anthropic":
+      return { anthropic: { thinking: { type: "disabled" } } };
+    case "openai":
+      return undefined;
+    case "openrouter":
+      return undefined;
+    default: {
+      const unreachable: never = provider;
+      throw new Error(`Unsupported provider: ${unreachable}`);
+    }
+  }
 }
 
 export function isInteractiveElement(element: HTMLElement) {
