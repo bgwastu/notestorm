@@ -81,6 +81,11 @@ export function getDisabledThinkingOptions(provider: SettingsProvider, model?: P
     return undefined;
   }
 
+  // If model has reasoning but cannot disable it, don't try to disable
+  if (model && model.hasReasoning && !model.canDisableThinking) {
+    return undefined;
+  }
+
   switch (provider) {
     case "groq":
       return { groq: { structuredOutputs: false } };

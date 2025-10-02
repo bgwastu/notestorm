@@ -11,6 +11,7 @@ export type ProviderModel = {
   name: string;
   apiModelId: string;
   hasReasoning: boolean;
+  canDisableThinking: boolean;
 };
 
 const MODELS: ProviderModel[] = [
@@ -20,6 +21,7 @@ const MODELS: ProviderModel[] = [
     name: "Compound Beta",
     apiModelId: "compound-beta",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "groq-compound-beta-mini",
@@ -27,6 +29,7 @@ const MODELS: ProviderModel[] = [
     name: "Compound Beta Mini",
     apiModelId: "compound-beta-mini",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "groq-deepseek-r1-70b",
@@ -34,6 +37,7 @@ const MODELS: ProviderModel[] = [
     name: "DeepSeek R1 70B",
     apiModelId: "deepseek-r1-distill-llama-70b",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "groq-gpt-oss-120b",
@@ -41,6 +45,7 @@ const MODELS: ProviderModel[] = [
     name: "GPT-OSS 120B",
     apiModelId: "openai/gpt-oss-120b",
     hasReasoning: true,
+    canDisableThinking: false,
   },
   {
     id: "groq-gpt-oss-20b",
@@ -48,6 +53,7 @@ const MODELS: ProviderModel[] = [
     name: "GPT-OSS 20B",
     apiModelId: "openai/gpt-oss-20b",
     hasReasoning: true,
+    canDisableThinking: false,
   },
   {
     id: "groq-kimi-k2",
@@ -55,6 +61,7 @@ const MODELS: ProviderModel[] = [
     name: "Kimi K2",
     apiModelId: "moonshotai/kimi-k2-instruct-0905",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "groq-llama-3.3-70b",
@@ -62,6 +69,7 @@ const MODELS: ProviderModel[] = [
     name: "Llama 3.3 70B",
     apiModelId: "llama-3.3-70b-versatile",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "groq-llama-4-maverick-17b",
@@ -69,6 +77,7 @@ const MODELS: ProviderModel[] = [
     name: "Llama 4 Maverick 17B",
     apiModelId: "meta-llama/llama-4-maverick-17b-128e-instruct",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "groq-llama-4-scout-17b",
@@ -76,6 +85,7 @@ const MODELS: ProviderModel[] = [
     name: "Llama 4 Scout 17B",
     apiModelId: "meta-llama/llama-4-scout-17b-16e-instruct",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "groq-qwen-qwq-32b",
@@ -83,6 +93,7 @@ const MODELS: ProviderModel[] = [
     name: "Qwen QwQ 32B",
     apiModelId: "qwen/qwen3-32b",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "googleai-gemini-1.5-flash",
@@ -90,6 +101,7 @@ const MODELS: ProviderModel[] = [
     name: "Gemini 1.5 Flash",
     apiModelId: "gemini-1.5-flash-002",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "googleai-gemini-1.5-pro",
@@ -97,6 +109,7 @@ const MODELS: ProviderModel[] = [
     name: "Gemini 1.5 Pro",
     apiModelId: "gemini-1.5-pro-002",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "googleai-gemini-2.0-flash",
@@ -104,6 +117,7 @@ const MODELS: ProviderModel[] = [
     name: "Gemini 2.0 Flash",
     apiModelId: "gemini-2.0-flash",
     hasReasoning: true,
+    canDisableThinking: false,
   },
   {
     id: "googleai-gemini-2.0-flash-lite",
@@ -111,6 +125,7 @@ const MODELS: ProviderModel[] = [
     name: "Gemini 2.0 Flash Lite",
     apiModelId: "gemini-2.0-flash-lite",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "googleai-gemini-2.0-pro",
@@ -118,6 +133,7 @@ const MODELS: ProviderModel[] = [
     name: "Gemini 2.0 Pro",
     apiModelId: "gemini-2.0-pro-exp",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "googleai-gemini-2.5-flash",
@@ -125,6 +141,7 @@ const MODELS: ProviderModel[] = [
     name: "Gemini 2.5 Flash",
     apiModelId: "gemini-2.5-flash",
     hasReasoning: true,
+    canDisableThinking: true,
   },
   {
     id: "googleai-gemini-2.5-flash-lite",
@@ -132,6 +149,7 @@ const MODELS: ProviderModel[] = [
     name: "Gemini 2.5 Flash Lite",
     apiModelId: "gemini-2.5-flash-lite-preview-06-17",
     hasReasoning: true,
+    canDisableThinking: false,
   },
   {
     id: "googleai-gemini-2.5-flash-preview",
@@ -139,6 +157,7 @@ const MODELS: ProviderModel[] = [
     name: "Gemini 2.5 Flash Preview (Image Gen)",
     apiModelId: "gemini-2.5-flash-image-preview",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "googleai-gemini-2.5-pro",
@@ -146,6 +165,7 @@ const MODELS: ProviderModel[] = [
     name: "Gemini 2.5 Pro",
     apiModelId: "gemini-2.5-pro",
     hasReasoning: true,
+    canDisableThinking: false,
   },
   {
     id: "googleai-gemini-2.5-pro-preview",
@@ -153,6 +173,7 @@ const MODELS: ProviderModel[] = [
     name: "Gemini 2.5 Pro Preview",
     apiModelId: "gemini-2.5-pro-preview-06-05",
     hasReasoning: true,
+    canDisableThinking: false,
   },
   {
     id: "googleai-gemini-exp",
@@ -160,6 +181,7 @@ const MODELS: ProviderModel[] = [
     name: "Gemini Experimental",
     apiModelId: "gemini-exp-1206",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "googleai-gemma-3-27b",
@@ -167,6 +189,7 @@ const MODELS: ProviderModel[] = [
     name: "Gemma 3 27B",
     apiModelId: "gemma-3-27b-it",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "anthropic-claude-3-haiku",
@@ -174,6 +197,7 @@ const MODELS: ProviderModel[] = [
     name: "Claude Haiku 3",
     apiModelId: "claude-3-haiku-20240307",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "anthropic-claude-3.5-haiku",
@@ -181,6 +205,7 @@ const MODELS: ProviderModel[] = [
     name: "Claude Haiku 3.5",
     apiModelId: "claude-3-5-haiku-20241022",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "anthropic-claude-4-opus",
@@ -188,6 +213,7 @@ const MODELS: ProviderModel[] = [
     name: "Claude Opus 4",
     apiModelId: "claude-opus-4-20250514",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "anthropic-claude-opus-4.1",
@@ -195,6 +221,7 @@ const MODELS: ProviderModel[] = [
     name: "Claude Opus 4.1",
     apiModelId: "claude-opus-4-1-20250805",
     hasReasoning: true,
+    canDisableThinking: true,
   },
   {
     id: "anthropic-claude-3.5-sonnet",
@@ -202,6 +229,7 @@ const MODELS: ProviderModel[] = [
     name: "Claude Sonnet 3.5",
     apiModelId: "claude-3-5-sonnet-latest",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "anthropic-claude-3.7-sonnet",
@@ -209,6 +237,7 @@ const MODELS: ProviderModel[] = [
     name: "Claude Sonnet 3.7",
     apiModelId: "claude-3-7-sonnet-20250219",
     hasReasoning: true,
+    canDisableThinking: true,
   },
   {
     id: "anthropic-claude-4-sonnet",
@@ -216,6 +245,7 @@ const MODELS: ProviderModel[] = [
     name: "Claude Sonnet 4",
     apiModelId: "claude-sonnet-4-20250514",
     hasReasoning: true,
+    canDisableThinking: true,
   },
   {
     id: "openai-chatgpt-4o",
@@ -223,6 +253,7 @@ const MODELS: ProviderModel[] = [
     name: "ChatGPT 4o",
     apiModelId: "chatgpt-4o-latest",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openai-gpt-4.1",
@@ -230,6 +261,7 @@ const MODELS: ProviderModel[] = [
     name: "GPT-4.1",
     apiModelId: "gpt-4.1",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openai-gpt-4.1-mini",
@@ -237,6 +269,7 @@ const MODELS: ProviderModel[] = [
     name: "GPT-4.1 Mini",
     apiModelId: "gpt-4.1-mini",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openai-gpt-4.1-nano",
@@ -244,6 +277,7 @@ const MODELS: ProviderModel[] = [
     name: "GPT-4.1 Nano",
     apiModelId: "gpt-4.1-nano",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openai-gpt-4.5",
@@ -251,6 +285,7 @@ const MODELS: ProviderModel[] = [
     name: "GPT-4.5 (Preview)",
     apiModelId: "gpt-4.5-preview",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openai-gpt-4o",
@@ -258,6 +293,7 @@ const MODELS: ProviderModel[] = [
     name: "GPT-4o",
     apiModelId: "openai-gpt-4o",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openai-gpt-4o-audio",
@@ -265,6 +301,7 @@ const MODELS: ProviderModel[] = [
     name: "GPT-4o Audio",
     apiModelId: "gpt-4o-audio-preview",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openai-gpt-4o-mini",
@@ -272,6 +309,7 @@ const MODELS: ProviderModel[] = [
     name: "GPT-4o Mini",
     apiModelId: "openai-gpt-4o-mini",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openai-gpt-5",
@@ -279,6 +317,7 @@ const MODELS: ProviderModel[] = [
     name: "GPT-5",
     apiModelId: "gpt-5",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openai-gpt-5-chat",
@@ -286,6 +325,7 @@ const MODELS: ProviderModel[] = [
     name: "GPT-5 Chat",
     apiModelId: "gpt-5-chat-latest",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openai-gpt-5-mini",
@@ -293,6 +333,7 @@ const MODELS: ProviderModel[] = [
     name: "GPT-5 mini",
     apiModelId: "gpt-5-mini",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openai-gpt-5-nano",
@@ -300,6 +341,7 @@ const MODELS: ProviderModel[] = [
     name: "GPT-5 nano",
     apiModelId: "gpt-5-nano",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openai-o1",
@@ -307,6 +349,7 @@ const MODELS: ProviderModel[] = [
     name: "o1",
     apiModelId: "o1",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openai-o1-mini",
@@ -314,6 +357,7 @@ const MODELS: ProviderModel[] = [
     name: "o1 mini",
     apiModelId: "o1-mini",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openai-o1-preview",
@@ -321,6 +365,7 @@ const MODELS: ProviderModel[] = [
     name: "o1 preview",
     apiModelId: "o1-preview",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openai-o1-pro",
@@ -328,6 +373,7 @@ const MODELS: ProviderModel[] = [
     name: "o1 pro",
     apiModelId: "o1-pro",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openai-o3",
@@ -335,6 +381,7 @@ const MODELS: ProviderModel[] = [
     name: "o3",
     apiModelId: "o3",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openai-o3-deep-research",
@@ -342,6 +389,7 @@ const MODELS: ProviderModel[] = [
     name: "o3 deep research",
     apiModelId: "o3-deep-research",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openai-o3-mini",
@@ -349,6 +397,7 @@ const MODELS: ProviderModel[] = [
     name: "o3 mini",
     apiModelId: "o3-mini",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openai-o3-pro",
@@ -356,6 +405,7 @@ const MODELS: ProviderModel[] = [
     name: "o3 pro",
     apiModelId: "o3-pro",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openai-o4-mini",
@@ -363,6 +413,7 @@ const MODELS: ProviderModel[] = [
     name: "o4 mini",
     apiModelId: "o4-mini",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openai-o4-mini-deep-research",
@@ -370,6 +421,7 @@ const MODELS: ProviderModel[] = [
     name: "o4 mini deep research",
     apiModelId: "o4-mini-deep-research",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-agentica-org-deepcoder-14b-preview",
@@ -377,6 +429,7 @@ const MODELS: ProviderModel[] = [
     name: "Agentica: Deepcoder 14B Preview (free)",
     apiModelId: "agentica-org/deepcoder-14b-preview:free",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-ai21-jamba-large-1-7",
@@ -384,6 +437,7 @@ const MODELS: ProviderModel[] = [
     name: "AI21: Jamba Large 1.7",
     apiModelId: "ai21/jamba-large-1.7",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-ai21-jamba-mini-1-7",
@@ -391,6 +445,7 @@ const MODELS: ProviderModel[] = [
     name: "AI21: Jamba Mini 1.7",
     apiModelId: "ai21/jamba-mini-1.7",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-aion-labs-aion-1-0",
@@ -398,6 +453,7 @@ const MODELS: ProviderModel[] = [
     name: "AionLabs: Aion-1.0",
     apiModelId: "aion-labs/aion-1.0",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-aion-labs-aion-1-0-mini",
@@ -405,6 +461,7 @@ const MODELS: ProviderModel[] = [
     name: "AionLabs: Aion-1.0-Mini",
     apiModelId: "aion-labs/aion-1.0-mini",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-aion-labs-aion-rp-llama-3-1-8b",
@@ -412,6 +469,7 @@ const MODELS: ProviderModel[] = [
     name: "AionLabs: Aion-RP 1.0 (8B)",
     apiModelId: "aion-labs/aion-rp-llama-3.1-8b",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-alfredpros-codellama-7b-instruct-solidity",
@@ -419,6 +477,7 @@ const MODELS: ProviderModel[] = [
     name: "AlfredPros: CodeLLaMa 7B Instruct Solidity",
     apiModelId: "alfredpros/codellama-7b-instruct-solidity",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-allenai-molmo-7b-d-0924",
@@ -426,6 +485,7 @@ const MODELS: ProviderModel[] = [
     name: "AllenAI: Molmo 7B D",
     apiModelId: "allenai/molmo-7b-d",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-allenai-olmo-2-0325-32b-instruct",
@@ -433,6 +493,7 @@ const MODELS: ProviderModel[] = [
     name: "AllenAI: Olmo 2 32B Instruct",
     apiModelId: "allenai/olmo-2-0325-32b-instruct",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-amazon-nova-lite-v1",
@@ -440,6 +501,7 @@ const MODELS: ProviderModel[] = [
     name: "Amazon: Nova Lite 1.0",
     apiModelId: "amazon/nova-lite-v1",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-amazon-nova-micro-v1",
@@ -447,6 +509,7 @@ const MODELS: ProviderModel[] = [
     name: "Amazon: Nova Micro 1.0",
     apiModelId: "amazon/nova-micro-v1",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-amazon-nova-pro-v1",
@@ -454,6 +517,7 @@ const MODELS: ProviderModel[] = [
     name: "Amazon: Nova Pro 1.0",
     apiModelId: "amazon/nova-pro-v1",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-anthropic-claude-3-haiku",
@@ -461,6 +525,7 @@ const MODELS: ProviderModel[] = [
     name: "Anthropic: Claude 3 Haiku",
     apiModelId: "anthropic/claude-3-haiku",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-anthropic-claude-3-opus",
@@ -468,6 +533,7 @@ const MODELS: ProviderModel[] = [
     name: "Anthropic: Claude 3 Opus",
     apiModelId: "anthropic/claude-3-opus",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-anthropic-claude-3-5-haiku",
@@ -475,6 +541,7 @@ const MODELS: ProviderModel[] = [
     name: "Anthropic: Claude 3.5 Haiku",
     apiModelId: "anthropic/claude-3.5-haiku",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-anthropic-claude-3-5-haiku-20241022",
@@ -482,6 +549,7 @@ const MODELS: ProviderModel[] = [
     name: "Anthropic: Claude 3.5 Haiku (2024-10-22)",
     apiModelId: "anthropic/claude-3.5-haiku-20241022",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-anthropic-claude-3-5-sonnet",
@@ -489,6 +557,7 @@ const MODELS: ProviderModel[] = [
     name: "Anthropic: Claude 3.5 Sonnet",
     apiModelId: "anthropic/claude-3.5-sonnet",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-anthropic-claude-3-5-sonnet-20240620",
@@ -496,6 +565,7 @@ const MODELS: ProviderModel[] = [
     name: "Anthropic: Claude 3.5 Sonnet (2024-06-20)",
     apiModelId: "anthropic/claude-3.5-sonnet-20240620",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-anthropic-claude-3-7-sonnet-20250219",
@@ -503,6 +573,7 @@ const MODELS: ProviderModel[] = [
     name: "Anthropic: Claude 3.7 Sonnet",
     apiModelId: "anthropic/claude-3.7-sonnet",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-anthropic-claude-4-opus-20250522",
@@ -510,6 +581,7 @@ const MODELS: ProviderModel[] = [
     name: "Anthropic: Claude Opus 4",
     apiModelId: "anthropic/claude-opus-4",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-anthropic-claude-4-1-opus-20250805",
@@ -517,6 +589,7 @@ const MODELS: ProviderModel[] = [
     name: "Anthropic: Claude Opus 4.1",
     apiModelId: "anthropic/claude-opus-4.1",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-anthropic-claude-4-sonnet-20250522",
@@ -524,6 +597,7 @@ const MODELS: ProviderModel[] = [
     name: "Anthropic: Claude Sonnet 4",
     apiModelId: "anthropic/claude-sonnet-4",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-anthropic-claude-4-5-sonnet-20250929",
@@ -531,6 +605,7 @@ const MODELS: ProviderModel[] = [
     name: "Anthropic: Claude Sonnet 4.5",
     apiModelId: "anthropic/claude-sonnet-4.5",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-arcee-ai-afm-4-5b",
@@ -538,6 +613,7 @@ const MODELS: ProviderModel[] = [
     name: "Arcee AI: AFM 4.5B",
     apiModelId: "arcee-ai/afm-4.5b",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-arcee-ai-coder-large",
@@ -545,6 +621,7 @@ const MODELS: ProviderModel[] = [
     name: "Arcee AI: Coder Large",
     apiModelId: "arcee-ai/coder-large",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-arcee-ai-maestro-reasoning",
@@ -552,6 +629,7 @@ const MODELS: ProviderModel[] = [
     name: "Arcee AI: Maestro Reasoning",
     apiModelId: "arcee-ai/maestro-reasoning",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-arcee-ai-spotlight",
@@ -559,6 +637,7 @@ const MODELS: ProviderModel[] = [
     name: "Arcee AI: Spotlight",
     apiModelId: "arcee-ai/spotlight",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-arcee-ai-virtuoso-large",
@@ -566,6 +645,7 @@ const MODELS: ProviderModel[] = [
     name: "Arcee AI: Virtuoso Large",
     apiModelId: "arcee-ai/virtuoso-large",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-arliai-qwq-32b-arliai-rpr-v1",
@@ -573,6 +653,7 @@ const MODELS: ProviderModel[] = [
     name: "ArliAI: QwQ 32B RpR v1 (free)",
     apiModelId: "arliai/qwq-32b-arliai-rpr-v1:free",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-openrouter-auto",
@@ -580,6 +661,7 @@ const MODELS: ProviderModel[] = [
     name: "Auto Router",
     apiModelId: "openrouter/auto",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-baidu-ernie-4-5-21b-a3b",
@@ -587,6 +669,7 @@ const MODELS: ProviderModel[] = [
     name: "Baidu: ERNIE 4.5 21B A3B",
     apiModelId: "baidu/ernie-4.5-21b-a3b",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-baidu-ernie-4-5-300b-a47b",
@@ -594,6 +677,7 @@ const MODELS: ProviderModel[] = [
     name: "Baidu: ERNIE 4.5 300B A47B ",
     apiModelId: "baidu/ernie-4.5-300b-a47b",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-baidu-ernie-4-5-vl-28b-a3b",
@@ -601,6 +685,7 @@ const MODELS: ProviderModel[] = [
     name: "Baidu: ERNIE 4.5 VL 28B A3B",
     apiModelId: "baidu/ernie-4.5-vl-28b-a3b",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-baidu-ernie-4-5-vl-424b-a47b",
@@ -608,6 +693,7 @@ const MODELS: ProviderModel[] = [
     name: "Baidu: ERNIE 4.5 VL 424B A47B ",
     apiModelId: "baidu/ernie-4.5-vl-424b-a47b",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-bytedance-seed-oss-36b-instruct",
@@ -615,6 +701,7 @@ const MODELS: ProviderModel[] = [
     name: "ByteDance: Seed OSS 36B Instruct",
     apiModelId: "bytedance/seed-oss-36b-instruct",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-bytedance-ui-tars-1-5-7b",
@@ -622,6 +709,7 @@ const MODELS: ProviderModel[] = [
     name: "ByteDance: UI-TARS 7B ",
     apiModelId: "bytedance/ui-tars-1.5-7b",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-deepcogito-cogito-v2-preview-llama-109b-moe",
@@ -629,6 +717,7 @@ const MODELS: ProviderModel[] = [
     name: "Cogito V2 Preview Llama 109B",
     apiModelId: "deepcogito/cogito-v2-preview-llama-109b-moe",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-cohere-command-a-03-2025",
@@ -636,6 +725,7 @@ const MODELS: ProviderModel[] = [
     name: "Cohere: Command A",
     apiModelId: "cohere/command-a",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-cohere-command-r-08-2024",
@@ -643,6 +733,7 @@ const MODELS: ProviderModel[] = [
     name: "Cohere: Command R (08-2024)",
     apiModelId: "cohere/command-r-08-2024",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-cohere-command-r-plus-08-2024",
@@ -650,6 +741,7 @@ const MODELS: ProviderModel[] = [
     name: "Cohere: Command R+ (08-2024)",
     apiModelId: "cohere/command-r-plus-08-2024",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-cohere-command-r7b-12-2024",
@@ -657,6 +749,7 @@ const MODELS: ProviderModel[] = [
     name: "Cohere: Command R7B (12-2024)",
     apiModelId: "cohere/command-r7b-12-2024",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-deepcogito-cogito-v2-preview-deepseek-671b",
@@ -664,6 +757,7 @@ const MODELS: ProviderModel[] = [
     name: "Deep Cogito: Cogito V2 Preview Deepseek 671B",
     apiModelId: "deepcogito/cogito-v2-preview-deepseek-671b",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-deepseek-deepseek-prover-v2",
@@ -671,6 +765,7 @@ const MODELS: ProviderModel[] = [
     name: "DeepSeek: DeepSeek Prover V2",
     apiModelId: "deepseek/deepseek-prover-v2",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-deepseek-deepseek-r1-0528-qwen3-8b",
@@ -678,6 +773,7 @@ const MODELS: ProviderModel[] = [
     name: "DeepSeek: Deepseek R1 0528 Qwen3 8B (free)",
     apiModelId: "deepseek/deepseek-r1-0528-qwen3-8b:free",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-deepseek-deepseek-chat-v3",
@@ -685,6 +781,7 @@ const MODELS: ProviderModel[] = [
     name: "DeepSeek: DeepSeek V3",
     apiModelId: "deepseek/deepseek-chat",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-deepseek-deepseek-chat-v3-0324",
@@ -692,6 +789,7 @@ const MODELS: ProviderModel[] = [
     name: "DeepSeek: DeepSeek V3 0324 (free)",
     apiModelId: "deepseek/deepseek-chat-v3-0324:free",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-deepseek-deepseek-chat-v3-1",
@@ -699,6 +797,7 @@ const MODELS: ProviderModel[] = [
     name: "DeepSeek: DeepSeek V3.1 (free)",
     apiModelId: "deepseek/deepseek-chat-v3.1:free",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-deepseek-deepseek-v3-1-base",
@@ -706,6 +805,7 @@ const MODELS: ProviderModel[] = [
     name: "DeepSeek: DeepSeek V3.1 Base",
     apiModelId: "deepseek/deepseek-v3.1-base",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-deepseek-deepseek-v3-1-terminus",
@@ -713,6 +813,7 @@ const MODELS: ProviderModel[] = [
     name: "DeepSeek: DeepSeek V3.1 Terminus",
     apiModelId: "deepseek/deepseek-v3.1-terminus",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-deepseek-deepseek-v3-2-exp",
@@ -720,6 +821,7 @@ const MODELS: ProviderModel[] = [
     name: "DeepSeek: DeepSeek V3.2 Exp",
     apiModelId: "deepseek/deepseek-v3.2-exp",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-deepseek-deepseek-r1",
@@ -727,6 +829,7 @@ const MODELS: ProviderModel[] = [
     name: "DeepSeek: R1 (free)",
     apiModelId: "deepseek/deepseek-r1:free",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-deepseek-deepseek-r1-0528",
@@ -734,6 +837,7 @@ const MODELS: ProviderModel[] = [
     name: "DeepSeek: R1 0528 (free)",
     apiModelId: "deepseek/deepseek-r1-0528:free",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-deepseek-deepseek-r1-distill-llama-70b",
@@ -741,6 +845,7 @@ const MODELS: ProviderModel[] = [
     name: "DeepSeek: R1 Distill Llama 70B (free)",
     apiModelId: "deepseek/deepseek-r1-distill-llama-70b:free",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-deepseek-deepseek-r1-distill-llama-8b",
@@ -748,6 +853,7 @@ const MODELS: ProviderModel[] = [
     name: "DeepSeek: R1 Distill Llama 8B",
     apiModelId: "deepseek/deepseek-r1-distill-llama-8b",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-deepseek-deepseek-r1-distill-qwen-14b",
@@ -755,6 +861,7 @@ const MODELS: ProviderModel[] = [
     name: "DeepSeek: R1 Distill Qwen 14B",
     apiModelId: "deepseek/deepseek-r1-distill-qwen-14b",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-deepseek-deepseek-r1-distill-qwen-32b",
@@ -762,6 +869,7 @@ const MODELS: ProviderModel[] = [
     name: "DeepSeek: R1 Distill Qwen 32B",
     apiModelId: "deepseek/deepseek-r1-distill-qwen-32b",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-cognitivecomputations-dolphin3-0-mistral-24b",
@@ -769,6 +877,7 @@ const MODELS: ProviderModel[] = [
     name: "Dolphin3.0 Mistral 24B (free)",
     apiModelId: "cognitivecomputations/dolphin3.0-mistral-24b:free",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-cognitivecomputations-dolphin3-0-r1-mistral-24b",
@@ -776,6 +885,7 @@ const MODELS: ProviderModel[] = [
     name: "Dolphin3.0 R1 Mistral 24B (free)",
     apiModelId: "cognitivecomputations/dolphin3.0-r1-mistral-24b:free",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-eleutherai-llemma-7b",
@@ -783,6 +893,7 @@ const MODELS: ProviderModel[] = [
     name: "EleutherAI: Llemma 7b",
     apiModelId: "eleutherai/llemma_7b",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-google-gemini-2-5-flash-image-preview",
@@ -790,6 +901,7 @@ const MODELS: ProviderModel[] = [
     name: "Gemini 2.5 Flash Image (Nano Banana)",
     apiModelId: "google/gemini-2.5-flash-image-preview",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-alpindale-goliath-120b",
@@ -797,6 +909,7 @@ const MODELS: ProviderModel[] = [
     name: "Goliath 120B",
     apiModelId: "alpindale/goliath-120b",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-google-gemini-2-0-flash-001",
@@ -804,6 +917,7 @@ const MODELS: ProviderModel[] = [
     name: "Google: Gemini 2.0 Flash",
     apiModelId: "google/gemini-2.0-flash-001",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-google-gemini-2-0-flash-exp",
@@ -811,6 +925,7 @@ const MODELS: ProviderModel[] = [
     name: "Google: Gemini 2.0 Flash Experimental (free)",
     apiModelId: "google/gemini-2.0-flash-exp:free",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-google-gemini-2-0-flash-lite-001",
@@ -818,6 +933,7 @@ const MODELS: ProviderModel[] = [
     name: "Google: Gemini 2.0 Flash Lite",
     apiModelId: "google/gemini-2.0-flash-lite-001",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-google-gemini-2-5-flash",
@@ -825,6 +941,7 @@ const MODELS: ProviderModel[] = [
     name: "Google: Gemini 2.5 Flash",
     apiModelId: "google/gemini-2.5-flash",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-google-gemini-2-5-flash-lite",
@@ -832,6 +949,7 @@ const MODELS: ProviderModel[] = [
     name: "Google: Gemini 2.5 Flash Lite",
     apiModelId: "google/gemini-2.5-flash-lite",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-google-gemini-2-5-flash-lite-preview-06-17",
@@ -839,6 +957,7 @@ const MODELS: ProviderModel[] = [
     name: "Google: Gemini 2.5 Flash Lite Preview 06-17",
     apiModelId: "google/gemini-2.5-flash-lite-preview-06-17",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-google-gemini-2-5-flash-lite-preview-09-2025",
@@ -846,6 +965,7 @@ const MODELS: ProviderModel[] = [
     name: "Google: Gemini 2.5 Flash Lite Preview 09-2025",
     apiModelId: "google/gemini-2.5-flash-lite-preview-09-2025",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-google-gemini-2-5-flash-preview-09-2025",
@@ -853,6 +973,7 @@ const MODELS: ProviderModel[] = [
     name: "Google: Gemini 2.5 Flash Preview 09-2025",
     apiModelId: "google/gemini-2.5-flash-preview-09-2025",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-google-gemini-2-5-pro",
@@ -860,6 +981,7 @@ const MODELS: ProviderModel[] = [
     name: "Google: Gemini 2.5 Pro",
     apiModelId: "google/gemini-2.5-pro",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-google-gemini-2-5-pro-preview-03-25",
@@ -867,6 +989,7 @@ const MODELS: ProviderModel[] = [
     name: "Google: Gemini 2.5 Pro Preview 05-06",
     apiModelId: "google/gemini-2.5-pro-preview-05-06",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-google-gemini-2-5-pro-preview-06-05",
@@ -874,6 +997,7 @@ const MODELS: ProviderModel[] = [
     name: "Google: Gemini 2.5 Pro Preview 06-05",
     apiModelId: "google/gemini-2.5-pro-preview",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-google-gemma-2-27b-it",
@@ -881,6 +1005,7 @@ const MODELS: ProviderModel[] = [
     name: "Google: Gemma 2 27B",
     apiModelId: "google/gemma-2-27b-it",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-google-gemma-2-9b-it",
@@ -888,6 +1013,7 @@ const MODELS: ProviderModel[] = [
     name: "Google: Gemma 2 9B (free)",
     apiModelId: "google/gemma-2-9b-it:free",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-google-gemma-3-12b-it",
@@ -895,6 +1021,7 @@ const MODELS: ProviderModel[] = [
     name: "Google: Gemma 3 12B (free)",
     apiModelId: "google/gemma-3-12b-it:free",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-google-gemma-3-27b-it",
@@ -902,6 +1029,7 @@ const MODELS: ProviderModel[] = [
     name: "Google: Gemma 3 27B (free)",
     apiModelId: "google/gemma-3-27b-it:free",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-google-gemma-3-4b-it",
@@ -909,6 +1037,7 @@ const MODELS: ProviderModel[] = [
     name: "Google: Gemma 3 4B (free)",
     apiModelId: "google/gemma-3-4b-it:free",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-google-gemma-3n-e2b-it",
@@ -916,6 +1045,7 @@ const MODELS: ProviderModel[] = [
     name: "Google: Gemma 3n 2B (free)",
     apiModelId: "google/gemma-3n-e2b-it:free",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-google-gemma-3n-e4b-it",
@@ -923,6 +1053,7 @@ const MODELS: ProviderModel[] = [
     name: "Google: Gemma 3n 4B (free)",
     apiModelId: "google/gemma-3n-e4b-it:free",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-inception-mercury",
@@ -930,6 +1061,7 @@ const MODELS: ProviderModel[] = [
     name: "Inception: Mercury",
     apiModelId: "inception/mercury",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-inception-mercury-coder-small-beta",
@@ -937,6 +1069,7 @@ const MODELS: ProviderModel[] = [
     name: "Inception: Mercury Coder",
     apiModelId: "inception/mercury-coder",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-inflection-inflection-3-pi",
@@ -944,6 +1077,7 @@ const MODELS: ProviderModel[] = [
     name: "Inflection: Inflection 3 Pi",
     apiModelId: "inflection/inflection-3-pi",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-inflection-inflection-3-productivity",
@@ -951,6 +1085,7 @@ const MODELS: ProviderModel[] = [
     name: "Inflection: Inflection 3 Productivity",
     apiModelId: "inflection/inflection-3-productivity",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-liquid-lfm-3b",
@@ -958,6 +1093,7 @@ const MODELS: ProviderModel[] = [
     name: "Liquid: LFM 3B",
     apiModelId: "liquid/lfm-3b",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-liquid-lfm-7b",
@@ -965,6 +1101,7 @@ const MODELS: ProviderModel[] = [
     name: "Liquid: LFM 7B",
     apiModelId: "liquid/lfm-7b",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-meta-llama-llama-guard-3-8b",
@@ -972,6 +1109,7 @@ const MODELS: ProviderModel[] = [
     name: "Llama Guard 3 8B",
     apiModelId: "meta-llama/llama-guard-3-8b",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-anthracite-org-magnum-v2-72b",
@@ -979,6 +1117,7 @@ const MODELS: ProviderModel[] = [
     name: "Magnum v2 72B",
     apiModelId: "anthracite-org/magnum-v2-72b",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-anthracite-org-magnum-v4-72b",
@@ -986,6 +1125,7 @@ const MODELS: ProviderModel[] = [
     name: "Magnum v4 72B",
     apiModelId: "anthracite-org/magnum-v4-72b",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-mancer-weaver",
@@ -993,6 +1133,7 @@ const MODELS: ProviderModel[] = [
     name: "Mancer: Weaver (alpha)",
     apiModelId: "mancer/weaver",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-meituan-longcat-flash-chat",
@@ -1000,6 +1141,7 @@ const MODELS: ProviderModel[] = [
     name: "Meituan: LongCat Flash Chat (free)",
     apiModelId: "meituan/longcat-flash-chat:free",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-meta-llama-llama-3-70b-instruct",
@@ -1007,6 +1149,7 @@ const MODELS: ProviderModel[] = [
     name: "Meta: Llama 3 70B Instruct",
     apiModelId: "meta-llama/llama-3-70b-instruct",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-meta-llama-llama-3-8b-instruct",
@@ -1014,6 +1157,7 @@ const MODELS: ProviderModel[] = [
     name: "Meta: Llama 3 8B Instruct",
     apiModelId: "meta-llama/llama-3-8b-instruct",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-meta-llama-llama-3-1-405b",
@@ -1021,6 +1165,7 @@ const MODELS: ProviderModel[] = [
     name: "Meta: Llama 3.1 405B (base)",
     apiModelId: "meta-llama/llama-3.1-405b",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-meta-llama-llama-3-1-405b-instruct",
@@ -1028,6 +1173,7 @@ const MODELS: ProviderModel[] = [
     name: "Meta: Llama 3.1 405B Instruct",
     apiModelId: "meta-llama/llama-3.1-405b-instruct",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-meta-llama-llama-3-1-70b-instruct",
@@ -1035,6 +1181,7 @@ const MODELS: ProviderModel[] = [
     name: "Meta: Llama 3.1 70B Instruct",
     apiModelId: "meta-llama/llama-3.1-70b-instruct",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-meta-llama-llama-3-1-8b-instruct",
@@ -1042,6 +1189,7 @@ const MODELS: ProviderModel[] = [
     name: "Meta: Llama 3.1 8B Instruct",
     apiModelId: "meta-llama/llama-3.1-8b-instruct",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-meta-llama-llama-3-2-11b-vision-instruct",
@@ -1049,6 +1197,7 @@ const MODELS: ProviderModel[] = [
     name: "Meta: Llama 3.2 11B Vision Instruct",
     apiModelId: "meta-llama/llama-3.2-11b-vision-instruct",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-meta-llama-llama-3-2-1b-instruct",
@@ -1056,6 +1205,7 @@ const MODELS: ProviderModel[] = [
     name: "Meta: Llama 3.2 1B Instruct",
     apiModelId: "meta-llama/llama-3.2-1b-instruct",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-meta-llama-llama-3-2-3b-instruct",
@@ -1063,6 +1213,7 @@ const MODELS: ProviderModel[] = [
     name: "Meta: Llama 3.2 3B Instruct (free)",
     apiModelId: "meta-llama/llama-3.2-3b-instruct:free",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-meta-llama-llama-3-2-90b-vision-instruct",
@@ -1070,6 +1221,7 @@ const MODELS: ProviderModel[] = [
     name: "Meta: Llama 3.2 90B Vision Instruct",
     apiModelId: "meta-llama/llama-3.2-90b-vision-instruct",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-meta-llama-llama-3-3-70b-instruct",
@@ -1077,6 +1229,7 @@ const MODELS: ProviderModel[] = [
     name: "Meta: Llama 3.3 70B Instruct (free)",
     apiModelId: "meta-llama/llama-3.3-70b-instruct:free",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-meta-llama-llama-3-3-8b-instruct",
@@ -1084,6 +1237,7 @@ const MODELS: ProviderModel[] = [
     name: "Meta: Llama 3.3 8B Instruct (free)",
     apiModelId: "meta-llama/llama-3.3-8b-instruct:free",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-meta-llama-llama-4-maverick-17b-128e-instruct",
@@ -1091,6 +1245,7 @@ const MODELS: ProviderModel[] = [
     name: "Meta: Llama 4 Maverick (free)",
     apiModelId: "meta-llama/llama-4-maverick:free",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-meta-llama-llama-4-scout-17b-16e-instruct",
@@ -1098,6 +1253,7 @@ const MODELS: ProviderModel[] = [
     name: "Meta: Llama 4 Scout (free)",
     apiModelId: "meta-llama/llama-4-scout:free",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-meta-llama-llama-guard-4-12b",
@@ -1105,6 +1261,7 @@ const MODELS: ProviderModel[] = [
     name: "Meta: Llama Guard 4 12B",
     apiModelId: "meta-llama/llama-guard-4-12b",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-meta-llama-llama-guard-2-8b",
@@ -1112,6 +1269,7 @@ const MODELS: ProviderModel[] = [
     name: "Meta: LlamaGuard 2 8B",
     apiModelId: "meta-llama/llama-guard-2-8b",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-microsoft-mai-ds-r1",
@@ -1119,6 +1277,7 @@ const MODELS: ProviderModel[] = [
     name: "Microsoft: MAI DS R1 (free)",
     apiModelId: "microsoft/mai-ds-r1:free",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-microsoft-phi-4",
@@ -1126,6 +1285,7 @@ const MODELS: ProviderModel[] = [
     name: "Microsoft: Phi 4",
     apiModelId: "microsoft/phi-4",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-microsoft-phi-4-multimodal-instruct",
@@ -1133,6 +1293,7 @@ const MODELS: ProviderModel[] = [
     name: "Microsoft: Phi 4 Multimodal Instruct",
     apiModelId: "microsoft/phi-4-multimodal-instruct",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-microsoft-phi-4-reasoning-plus-04-30",
@@ -1140,6 +1301,7 @@ const MODELS: ProviderModel[] = [
     name: "Microsoft: Phi 4 Reasoning Plus",
     apiModelId: "microsoft/phi-4-reasoning-plus",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-microsoft-phi-3-medium-128k-instruct",
@@ -1147,6 +1309,7 @@ const MODELS: ProviderModel[] = [
     name: "Microsoft: Phi-3 Medium 128K Instruct",
     apiModelId: "microsoft/phi-3-medium-128k-instruct",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-microsoft-phi-3-mini-128k-instruct",
@@ -1154,6 +1317,7 @@ const MODELS: ProviderModel[] = [
     name: "Microsoft: Phi-3 Mini 128K Instruct",
     apiModelId: "microsoft/phi-3-mini-128k-instruct",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-microsoft-phi-3-5-mini-128k-instruct",
@@ -1161,6 +1325,7 @@ const MODELS: ProviderModel[] = [
     name: "Microsoft: Phi-3.5 Mini 128K Instruct",
     apiModelId: "microsoft/phi-3.5-mini-128k-instruct",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-minimax-minimax-m1",
@@ -1168,6 +1333,7 @@ const MODELS: ProviderModel[] = [
     name: "MiniMax: MiniMax M1",
     apiModelId: "minimax/minimax-m1",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-minimax-minimax-01",
@@ -1175,6 +1341,7 @@ const MODELS: ProviderModel[] = [
     name: "MiniMax: MiniMax-01",
     apiModelId: "minimax/minimax-01",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-mistralai-mistral-large",
@@ -1182,6 +1349,7 @@ const MODELS: ProviderModel[] = [
     name: "Mistral Large",
     apiModelId: "mistralai/mistral-large",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-mistralai-mistral-large-2407",
@@ -1189,6 +1357,7 @@ const MODELS: ProviderModel[] = [
     name: "Mistral Large 2407",
     apiModelId: "mistralai/mistral-large-2407",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-mistralai-mistral-large-2411",
@@ -1196,6 +1365,7 @@ const MODELS: ProviderModel[] = [
     name: "Mistral Large 2411",
     apiModelId: "mistralai/mistral-large-2411",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-mistralai-mistral-small",
@@ -1203,6 +1373,7 @@ const MODELS: ProviderModel[] = [
     name: "Mistral Small",
     apiModelId: "mistralai/mistral-small",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-mistralai-mistral-tiny",
@@ -1210,6 +1381,7 @@ const MODELS: ProviderModel[] = [
     name: "Mistral Tiny",
     apiModelId: "mistralai/mistral-tiny",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-mistralai-codestral-2501",
@@ -1217,6 +1389,7 @@ const MODELS: ProviderModel[] = [
     name: "Mistral: Codestral 2501",
     apiModelId: "mistralai/codestral-2501",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-mistralai-codestral-2508",
@@ -1224,6 +1397,7 @@ const MODELS: ProviderModel[] = [
     name: "Mistral: Codestral 2508",
     apiModelId: "mistralai/codestral-2508",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-mistralai-devstral-medium-2507",
@@ -1231,6 +1405,7 @@ const MODELS: ProviderModel[] = [
     name: "Mistral: Devstral Medium",
     apiModelId: "mistralai/devstral-medium",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-mistralai-devstral-small-2507",
@@ -1238,6 +1413,7 @@ const MODELS: ProviderModel[] = [
     name: "Mistral: Devstral Small 1.1",
     apiModelId: "mistralai/devstral-small",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-mistralai-devstral-small-2505",
@@ -1245,6 +1421,7 @@ const MODELS: ProviderModel[] = [
     name: "Mistral: Devstral Small 2505 (free)",
     apiModelId: "mistralai/devstral-small-2505:free",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-mistralai-magistral-medium-2506",
@@ -1252,6 +1429,7 @@ const MODELS: ProviderModel[] = [
     name: "Mistral: Magistral Medium 2506",
     apiModelId: "mistralai/magistral-medium-2506",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-mistralai-magistral-small-2506",
@@ -1259,6 +1437,7 @@ const MODELS: ProviderModel[] = [
     name: "Mistral: Magistral Small 2506",
     apiModelId: "mistralai/magistral-small-2506",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-mistralai-ministral-3b",
@@ -1266,6 +1445,7 @@ const MODELS: ProviderModel[] = [
     name: "Mistral: Ministral 3B",
     apiModelId: "mistralai/ministral-3b",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-mistralai-ministral-8b",
@@ -1273,6 +1453,7 @@ const MODELS: ProviderModel[] = [
     name: "Mistral: Ministral 8B",
     apiModelId: "mistralai/ministral-8b",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-mistralai-mistral-7b-instruct",
@@ -1280,6 +1461,7 @@ const MODELS: ProviderModel[] = [
     name: "Mistral: Mistral 7B Instruct (free)",
     apiModelId: "mistralai/mistral-7b-instruct:free",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-mistralai-mistral-7b-instruct-v0-1",
@@ -1287,6 +1469,7 @@ const MODELS: ProviderModel[] = [
     name: "Mistral: Mistral 7B Instruct v0.1",
     apiModelId: "mistralai/mistral-7b-instruct-v0.1",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-mistralai-mistral-7b-instruct-v0-3",
@@ -1294,6 +1477,7 @@ const MODELS: ProviderModel[] = [
     name: "Mistral: Mistral 7B Instruct v0.3",
     apiModelId: "mistralai/mistral-7b-instruct-v0.3",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-mistralai-mistral-medium-3",
@@ -1301,6 +1485,7 @@ const MODELS: ProviderModel[] = [
     name: "Mistral: Mistral Medium 3",
     apiModelId: "mistralai/mistral-medium-3",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-mistralai-mistral-medium-3-1",
@@ -1308,6 +1493,7 @@ const MODELS: ProviderModel[] = [
     name: "Mistral: Mistral Medium 3.1",
     apiModelId: "mistralai/mistral-medium-3.1",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-mistralai-mistral-nemo",
@@ -1315,6 +1501,7 @@ const MODELS: ProviderModel[] = [
     name: "Mistral: Mistral Nemo (free)",
     apiModelId: "mistralai/mistral-nemo:free",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-mistralai-mistral-small-24b-instruct-2501",
@@ -1322,6 +1509,7 @@ const MODELS: ProviderModel[] = [
     name: "Mistral: Mistral Small 3 (free)",
     apiModelId: "mistralai/mistral-small-24b-instruct-2501:free",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-mistralai-mistral-small-3-1-24b-instruct-2503",
@@ -1329,6 +1517,7 @@ const MODELS: ProviderModel[] = [
     name: "Mistral: Mistral Small 3.1 24B (free)",
     apiModelId: "mistralai/mistral-small-3.1-24b-instruct:free",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-mistralai-mistral-small-3-2-24b-instruct-2506",
@@ -1336,6 +1525,7 @@ const MODELS: ProviderModel[] = [
     name: "Mistral: Mistral Small 3.2 24B (free)",
     apiModelId: "mistralai/mistral-small-3.2-24b-instruct:free",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-mistralai-mixtral-8x22b-instruct",
@@ -1343,6 +1533,7 @@ const MODELS: ProviderModel[] = [
     name: "Mistral: Mixtral 8x22B Instruct",
     apiModelId: "mistralai/mixtral-8x22b-instruct",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-mistralai-mixtral-8x7b-instruct",
@@ -1350,6 +1541,7 @@ const MODELS: ProviderModel[] = [
     name: "Mistral: Mixtral 8x7B Instruct",
     apiModelId: "mistralai/mixtral-8x7b-instruct",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-mistralai-pixtral-12b",
@@ -1357,6 +1549,7 @@ const MODELS: ProviderModel[] = [
     name: "Mistral: Pixtral 12B",
     apiModelId: "mistralai/pixtral-12b",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-mistralai-pixtral-large-2411",
@@ -1364,6 +1557,7 @@ const MODELS: ProviderModel[] = [
     name: "Mistral: Pixtral Large 2411",
     apiModelId: "mistralai/pixtral-large-2411",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-mistralai-mistral-saba-2502",
@@ -1371,6 +1565,7 @@ const MODELS: ProviderModel[] = [
     name: "Mistral: Saba",
     apiModelId: "mistralai/mistral-saba",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-moonshotai-kimi-dev-72b",
@@ -1378,6 +1573,7 @@ const MODELS: ProviderModel[] = [
     name: "MoonshotAI: Kimi Dev 72B (free)",
     apiModelId: "moonshotai/kimi-dev-72b:free",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-moonshotai-kimi-k2",
@@ -1385,6 +1581,7 @@ const MODELS: ProviderModel[] = [
     name: "MoonshotAI: Kimi K2 0711 (free)",
     apiModelId: "moonshotai/kimi-k2:free",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-moonshotai-kimi-k2-0905",
@@ -1392,6 +1589,7 @@ const MODELS: ProviderModel[] = [
     name: "MoonshotAI: Kimi K2 0905",
     apiModelId: "moonshotai/kimi-k2-0905",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-moonshotai-kimi-vl-a3b-thinking",
@@ -1399,6 +1597,7 @@ const MODELS: ProviderModel[] = [
     name: "MoonshotAI: Kimi VL A3B Thinking (free)",
     apiModelId: "moonshotai/kimi-vl-a3b-thinking:free",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-morph-morph-v3-fast",
@@ -1406,6 +1605,7 @@ const MODELS: ProviderModel[] = [
     name: "Morph: Morph V3 Fast",
     apiModelId: "morph/morph-v3-fast",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-morph-morph-v3-large",
@@ -1413,6 +1613,7 @@ const MODELS: ProviderModel[] = [
     name: "Morph: Morph V3 Large",
     apiModelId: "morph/morph-v3-large",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-gryphe-mythomax-l2-13b",
@@ -1420,6 +1621,7 @@ const MODELS: ProviderModel[] = [
     name: "MythoMax 13B",
     apiModelId: "gryphe/mythomax-l2-13b",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-neversleep-llama-3-lumimaid-70b",
@@ -1427,6 +1629,7 @@ const MODELS: ProviderModel[] = [
     name: "NeverSleep: Llama 3 Lumimaid 70B",
     apiModelId: "neversleep/llama-3-lumimaid-70b",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-neversleep-llama-3-1-lumimaid-8b",
@@ -1434,6 +1637,7 @@ const MODELS: ProviderModel[] = [
     name: "NeverSleep: Lumimaid v0.2 8B",
     apiModelId: "neversleep/llama-3.1-lumimaid-8b",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-neversleep-noromaid-20b",
@@ -1441,6 +1645,7 @@ const MODELS: ProviderModel[] = [
     name: "Noromaid 20B",
     apiModelId: "neversleep/noromaid-20b",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-nousresearch-deephermes-3-llama-3-8b-preview",
@@ -1448,6 +1653,7 @@ const MODELS: ProviderModel[] = [
     name: "Nous: DeepHermes 3 Llama 3 8B Preview (free)",
     apiModelId: "nousresearch/deephermes-3-llama-3-8b-preview:free",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-nousresearch-deephermes-3-mistral-24b-preview",
@@ -1455,6 +1661,7 @@ const MODELS: ProviderModel[] = [
     name: "Nous: DeepHermes 3 Mistral 24B Preview",
     apiModelId: "nousresearch/deephermes-3-mistral-24b-preview",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-nousresearch-hermes-3-llama-3-1-405b",
@@ -1462,6 +1669,7 @@ const MODELS: ProviderModel[] = [
     name: "Nous: Hermes 3 405B Instruct",
     apiModelId: "nousresearch/hermes-3-llama-3.1-405b",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-nousresearch-hermes-3-llama-3-1-70b",
@@ -1469,6 +1677,7 @@ const MODELS: ProviderModel[] = [
     name: "Nous: Hermes 3 70B Instruct",
     apiModelId: "nousresearch/hermes-3-llama-3.1-70b",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-nousresearch-hermes-4-405b",
@@ -1476,6 +1685,7 @@ const MODELS: ProviderModel[] = [
     name: "Nous: Hermes 4 405B",
     apiModelId: "nousresearch/hermes-4-405b",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-nousresearch-hermes-4-70b",
@@ -1483,6 +1693,7 @@ const MODELS: ProviderModel[] = [
     name: "Nous: Hermes 4 70B",
     apiModelId: "nousresearch/hermes-4-70b",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-nousresearch-hermes-2-pro-llama-3-8b",
@@ -1490,6 +1701,7 @@ const MODELS: ProviderModel[] = [
     name: "NousResearch: Hermes 2 Pro - Llama-3 8B",
     apiModelId: "nousresearch/hermes-2-pro-llama-3-8b",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-nvidia-llama-3-1-nemotron-70b-instruct",
@@ -1497,6 +1709,7 @@ const MODELS: ProviderModel[] = [
     name: "NVIDIA: Llama 3.1 Nemotron 70B Instruct",
     apiModelId: "nvidia/llama-3.1-nemotron-70b-instruct",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-nvidia-llama-3-1-nemotron-ultra-253b-v1",
@@ -1504,6 +1717,7 @@ const MODELS: ProviderModel[] = [
     name: "NVIDIA: Llama 3.1 Nemotron Ultra 253B v1",
     apiModelId: "nvidia/llama-3.1-nemotron-ultra-253b-v1",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-nvidia-nemotron-nano-9b-v2",
@@ -1511,6 +1725,7 @@ const MODELS: ProviderModel[] = [
     name: "NVIDIA: Nemotron Nano 9B V2 (free)",
     apiModelId: "nvidia/nemotron-nano-9b-v2:free",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-openai-chatgpt-4o-latest",
@@ -1518,6 +1733,7 @@ const MODELS: ProviderModel[] = [
     name: "OpenAI: ChatGPT-4o",
     apiModelId: "openai/chatgpt-4o-latest",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-openai-codex-mini",
@@ -1525,6 +1741,7 @@ const MODELS: ProviderModel[] = [
     name: "OpenAI: Codex Mini",
     apiModelId: "openai/codex-mini",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-openai-gpt-3-5-turbo",
@@ -1532,6 +1749,7 @@ const MODELS: ProviderModel[] = [
     name: "OpenAI: GPT-3.5 Turbo",
     apiModelId: "openai/gpt-3.5-turbo",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-openai-gpt-3-5-turbo-0613",
@@ -1539,6 +1757,7 @@ const MODELS: ProviderModel[] = [
     name: "OpenAI: GPT-3.5 Turbo (older v0613)",
     apiModelId: "openai/gpt-3.5-turbo-0613",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-openai-gpt-3-5-turbo-16k",
@@ -1546,6 +1765,7 @@ const MODELS: ProviderModel[] = [
     name: "OpenAI: GPT-3.5 Turbo 16k",
     apiModelId: "openai/gpt-3.5-turbo-16k",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-openai-gpt-3-5-turbo-instruct",
@@ -1553,6 +1773,7 @@ const MODELS: ProviderModel[] = [
     name: "OpenAI: GPT-3.5 Turbo Instruct",
     apiModelId: "openai/gpt-3.5-turbo-instruct",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-openai-gpt-4",
@@ -1560,6 +1781,7 @@ const MODELS: ProviderModel[] = [
     name: "OpenAI: GPT-4",
     apiModelId: "openai/gpt-4",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-openai-gpt-4-0314",
@@ -1567,6 +1789,7 @@ const MODELS: ProviderModel[] = [
     name: "OpenAI: GPT-4 (older v0314)",
     apiModelId: "openai/gpt-4-0314",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-openai-gpt-4-turbo",
@@ -1574,6 +1797,7 @@ const MODELS: ProviderModel[] = [
     name: "OpenAI: GPT-4 Turbo",
     apiModelId: "openai/gpt-4-turbo",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-openai-gpt-4-1106-preview",
@@ -1581,6 +1805,7 @@ const MODELS: ProviderModel[] = [
     name: "OpenAI: GPT-4 Turbo (older v1106)",
     apiModelId: "openai/gpt-4-1106-preview",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-openai-gpt-4-turbo-preview",
@@ -1588,6 +1813,7 @@ const MODELS: ProviderModel[] = [
     name: "OpenAI: GPT-4 Turbo Preview",
     apiModelId: "openai/gpt-4-turbo-preview",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-openai-gpt-4-1-2025-04-14",
@@ -1595,6 +1821,7 @@ const MODELS: ProviderModel[] = [
     name: "OpenAI: GPT-4.1",
     apiModelId: "openai/gpt-4.1",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-openai-gpt-4-1-mini-2025-04-14",
@@ -1602,6 +1829,7 @@ const MODELS: ProviderModel[] = [
     name: "OpenAI: GPT-4.1 Mini",
     apiModelId: "openai/gpt-4.1-mini",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-openai-gpt-4-1-nano-2025-04-14",
@@ -1609,6 +1837,7 @@ const MODELS: ProviderModel[] = [
     name: "OpenAI: GPT-4.1 Nano",
     apiModelId: "openai/gpt-4.1-nano",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-openai-gpt-4o",
@@ -1616,6 +1845,7 @@ const MODELS: ProviderModel[] = [
     name: "OpenAI: GPT-4o",
     apiModelId: "openai/gpt-4o",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-openai-gpt-4o-2024-05-13",
@@ -1623,6 +1853,7 @@ const MODELS: ProviderModel[] = [
     name: "OpenAI: GPT-4o (2024-05-13)",
     apiModelId: "openai/gpt-4o-2024-05-13",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-openai-gpt-4o-2024-08-06",
@@ -1630,6 +1861,7 @@ const MODELS: ProviderModel[] = [
     name: "OpenAI: GPT-4o (2024-08-06)",
     apiModelId: "openai/gpt-4o-2024-08-06",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-openai-gpt-4o-2024-11-20",
@@ -1637,6 +1869,7 @@ const MODELS: ProviderModel[] = [
     name: "OpenAI: GPT-4o (2024-11-20)",
     apiModelId: "openai/gpt-4o-2024-11-20",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-openai-gpt-4o-audio-preview",
@@ -1644,6 +1877,7 @@ const MODELS: ProviderModel[] = [
     name: "OpenAI: GPT-4o Audio",
     apiModelId: "openai/gpt-4o-audio-preview",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-openai-gpt-4o-search-preview-2025-03-11",
@@ -1651,6 +1885,7 @@ const MODELS: ProviderModel[] = [
     name: "OpenAI: GPT-4o Search Preview",
     apiModelId: "openai/gpt-4o-search-preview",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-openai-gpt-4o-mini",
@@ -1658,6 +1893,7 @@ const MODELS: ProviderModel[] = [
     name: "OpenAI: GPT-4o-mini",
     apiModelId: "openai/gpt-4o-mini",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-openai-gpt-4o-mini-2024-07-18",
@@ -1665,6 +1901,7 @@ const MODELS: ProviderModel[] = [
     name: "OpenAI: GPT-4o-mini (2024-07-18)",
     apiModelId: "openai/gpt-4o-mini-2024-07-18",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-openai-gpt-4o-mini-search-preview-2025-03-11",
@@ -1672,6 +1909,7 @@ const MODELS: ProviderModel[] = [
     name: "OpenAI: GPT-4o-mini Search Preview",
     apiModelId: "openai/gpt-4o-mini-search-preview",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-openai-gpt-5-2025-08-07",
@@ -1679,6 +1917,7 @@ const MODELS: ProviderModel[] = [
     name: "OpenAI: GPT-5",
     apiModelId: "openai/gpt-5",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-openai-gpt-5-chat-2025-08-07",
@@ -1686,6 +1925,7 @@ const MODELS: ProviderModel[] = [
     name: "OpenAI: GPT-5 Chat",
     apiModelId: "openai/gpt-5-chat",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-openai-gpt-5-codex",
@@ -1693,6 +1933,7 @@ const MODELS: ProviderModel[] = [
     name: "OpenAI: GPT-5 Codex",
     apiModelId: "openai/gpt-5-codex",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-openai-gpt-5-mini-2025-08-07",
@@ -1700,6 +1941,7 @@ const MODELS: ProviderModel[] = [
     name: "OpenAI: GPT-5 Mini",
     apiModelId: "openai/gpt-5-mini",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-openai-gpt-5-nano-2025-08-07",
@@ -1707,6 +1949,7 @@ const MODELS: ProviderModel[] = [
     name: "OpenAI: GPT-5 Nano",
     apiModelId: "openai/gpt-5-nano",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-openai-gpt-oss-120b",
@@ -1714,6 +1957,7 @@ const MODELS: ProviderModel[] = [
     name: "OpenAI: gpt-oss-120b (free)",
     apiModelId: "openai/gpt-oss-120b:free",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-openai-gpt-oss-20b",
@@ -1721,6 +1965,7 @@ const MODELS: ProviderModel[] = [
     name: "OpenAI: gpt-oss-20b (free)",
     apiModelId: "openai/gpt-oss-20b:free",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-openai-o1-2024-12-17",
@@ -1728,6 +1973,7 @@ const MODELS: ProviderModel[] = [
     name: "OpenAI: o1",
     apiModelId: "openai/o1",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-openai-o1-mini",
@@ -1735,6 +1981,7 @@ const MODELS: ProviderModel[] = [
     name: "OpenAI: o1-mini",
     apiModelId: "openai/o1-mini",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-openai-o1-mini-2024-09-12",
@@ -1742,6 +1989,7 @@ const MODELS: ProviderModel[] = [
     name: "OpenAI: o1-mini (2024-09-12)",
     apiModelId: "openai/o1-mini-2024-09-12",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-openai-o1-pro",
@@ -1749,6 +1997,7 @@ const MODELS: ProviderModel[] = [
     name: "OpenAI: o1-pro",
     apiModelId: "openai/o1-pro",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-openai-o3-2025-04-16",
@@ -1756,6 +2005,7 @@ const MODELS: ProviderModel[] = [
     name: "OpenAI: o3",
     apiModelId: "openai/o3",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-openai-o3-mini-2025-01-31",
@@ -1763,6 +2013,7 @@ const MODELS: ProviderModel[] = [
     name: "OpenAI: o3 Mini",
     apiModelId: "openai/o3-mini",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-openai-o3-mini-high-2025-01-31",
@@ -1770,6 +2021,7 @@ const MODELS: ProviderModel[] = [
     name: "OpenAI: o3 Mini High",
     apiModelId: "openai/o3-mini-high",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-openai-o3-pro-2025-06-10",
@@ -1777,6 +2029,7 @@ const MODELS: ProviderModel[] = [
     name: "OpenAI: o3 Pro",
     apiModelId: "openai/o3-pro",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-openai-o4-mini-2025-04-16",
@@ -1784,6 +2037,7 @@ const MODELS: ProviderModel[] = [
     name: "OpenAI: o4 Mini",
     apiModelId: "openai/o4-mini",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-openai-o4-mini-high-2025-04-16",
@@ -1791,6 +2045,7 @@ const MODELS: ProviderModel[] = [
     name: "OpenAI: o4 Mini High",
     apiModelId: "openai/o4-mini-high",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-opengvlab-internvl3-78b",
@@ -1798,6 +2053,7 @@ const MODELS: ProviderModel[] = [
     name: "OpenGVLab: InternVL3 78B",
     apiModelId: "opengvlab/internvl3-78b",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-perplexity-r1-1776",
@@ -1805,6 +2061,7 @@ const MODELS: ProviderModel[] = [
     name: "Perplexity: R1 1776",
     apiModelId: "perplexity/r1-1776",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-perplexity-sonar",
@@ -1812,6 +2069,7 @@ const MODELS: ProviderModel[] = [
     name: "Perplexity: Sonar",
     apiModelId: "perplexity/sonar",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-perplexity-sonar-deep-research",
@@ -1819,6 +2077,7 @@ const MODELS: ProviderModel[] = [
     name: "Perplexity: Sonar Deep Research",
     apiModelId: "perplexity/sonar-deep-research",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-perplexity-sonar-pro",
@@ -1826,6 +2085,7 @@ const MODELS: ProviderModel[] = [
     name: "Perplexity: Sonar Pro",
     apiModelId: "perplexity/sonar-pro",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-perplexity-sonar-reasoning",
@@ -1833,6 +2093,7 @@ const MODELS: ProviderModel[] = [
     name: "Perplexity: Sonar Reasoning",
     apiModelId: "perplexity/sonar-reasoning",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-perplexity-sonar-reasoning-pro",
@@ -1840,6 +2101,7 @@ const MODELS: ProviderModel[] = [
     name: "Perplexity: Sonar Reasoning Pro",
     apiModelId: "perplexity/sonar-reasoning-pro",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-qwen-qwen-plus-2025-07-28",
@@ -1847,6 +2109,7 @@ const MODELS: ProviderModel[] = [
     name: "Qwen: Qwen Plus 0728",
     apiModelId: "qwen/qwen-plus-2025-07-28",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-qwen-qwen-vl-max-2025-01-25",
@@ -1854,6 +2117,7 @@ const MODELS: ProviderModel[] = [
     name: "Qwen: Qwen VL Max",
     apiModelId: "qwen/qwen-vl-max",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-qwen-qwen-vl-plus",
@@ -1861,6 +2125,7 @@ const MODELS: ProviderModel[] = [
     name: "Qwen: Qwen VL Plus",
     apiModelId: "qwen/qwen-vl-plus",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-qwen-qwen-max-2025-01-25",
@@ -1868,6 +2133,7 @@ const MODELS: ProviderModel[] = [
     name: "Qwen: Qwen-Max ",
     apiModelId: "qwen/qwen-max",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-qwen-qwen-plus-2025-01-25",
@@ -1875,6 +2141,7 @@ const MODELS: ProviderModel[] = [
     name: "Qwen: Qwen-Plus",
     apiModelId: "qwen/qwen-plus",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-qwen-qwen-turbo-2024-11-01",
@@ -1882,6 +2149,7 @@ const MODELS: ProviderModel[] = [
     name: "Qwen: Qwen-Turbo",
     apiModelId: "qwen/qwen-turbo",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-qwen-qwen2-5-vl-32b-instruct",
@@ -1889,6 +2157,7 @@ const MODELS: ProviderModel[] = [
     name: "Qwen: Qwen2.5 VL 32B Instruct (free)",
     apiModelId: "qwen/qwen2.5-vl-32b-instruct:free",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-qwen-qwen2-5-vl-72b-instruct",
@@ -1896,6 +2165,7 @@ const MODELS: ProviderModel[] = [
     name: "Qwen: Qwen2.5 VL 72B Instruct (free)",
     apiModelId: "qwen/qwen2.5-vl-72b-instruct:free",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-qwen-qwen-2-vl-7b-instruct",
@@ -1903,6 +2173,7 @@ const MODELS: ProviderModel[] = [
     name: "Qwen: Qwen2.5-VL 7B Instruct",
     apiModelId: "qwen/qwen-2.5-vl-7b-instruct",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-qwen-qwen3-14b-04-28",
@@ -1910,6 +2181,7 @@ const MODELS: ProviderModel[] = [
     name: "Qwen: Qwen3 14B (free)",
     apiModelId: "qwen/qwen3-14b:free",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-qwen-qwen3-235b-a22b-04-28",
@@ -1917,6 +2189,7 @@ const MODELS: ProviderModel[] = [
     name: "Qwen: Qwen3 235B A22B (free)",
     apiModelId: "qwen/qwen3-235b-a22b:free",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-qwen-qwen3-235b-a22b-07-25",
@@ -1924,6 +2197,7 @@ const MODELS: ProviderModel[] = [
     name: "Qwen: Qwen3 235B A22B Instruct 2507",
     apiModelId: "qwen/qwen3-235b-a22b-2507",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-qwen-qwen3-235b-a22b-thinking-2507",
@@ -1931,6 +2205,7 @@ const MODELS: ProviderModel[] = [
     name: "Qwen: Qwen3 235B A22B Thinking 2507",
     apiModelId: "qwen/qwen3-235b-a22b-thinking-2507",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-qwen-qwen3-30b-a3b-04-28",
@@ -1938,6 +2213,7 @@ const MODELS: ProviderModel[] = [
     name: "Qwen: Qwen3 30B A3B (free)",
     apiModelId: "qwen/qwen3-30b-a3b:free",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-qwen-qwen3-30b-a3b-instruct-2507",
@@ -1945,6 +2221,7 @@ const MODELS: ProviderModel[] = [
     name: "Qwen: Qwen3 30B A3B Instruct 2507",
     apiModelId: "qwen/qwen3-30b-a3b-instruct-2507",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-qwen-qwen3-30b-a3b-thinking-2507",
@@ -1952,6 +2229,7 @@ const MODELS: ProviderModel[] = [
     name: "Qwen: Qwen3 30B A3B Thinking 2507",
     apiModelId: "qwen/qwen3-30b-a3b-thinking-2507",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-qwen-qwen3-32b-04-28",
@@ -1959,6 +2237,7 @@ const MODELS: ProviderModel[] = [
     name: "Qwen: Qwen3 32B",
     apiModelId: "qwen/qwen3-32b",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-qwen-qwen3-4b-04-28",
@@ -1966,6 +2245,7 @@ const MODELS: ProviderModel[] = [
     name: "Qwen: Qwen3 4B (free)",
     apiModelId: "qwen/qwen3-4b:free",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-qwen-qwen3-8b-04-28",
@@ -1973,6 +2253,7 @@ const MODELS: ProviderModel[] = [
     name: "Qwen: Qwen3 8B (free)",
     apiModelId: "qwen/qwen3-8b:free",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-qwen-qwen3-coder-30b-a3b-instruct",
@@ -1980,6 +2261,7 @@ const MODELS: ProviderModel[] = [
     name: "Qwen: Qwen3 Coder 30B A3B Instruct",
     apiModelId: "qwen/qwen3-coder-30b-a3b-instruct",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-qwen-qwen3-coder-480b-a35b-07-25",
@@ -1987,6 +2269,7 @@ const MODELS: ProviderModel[] = [
     name: "Qwen: Qwen3 Coder 480B A35B (free)",
     apiModelId: "qwen/qwen3-coder:free",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-qwen-qwen3-coder-flash",
@@ -1994,6 +2277,7 @@ const MODELS: ProviderModel[] = [
     name: "Qwen: Qwen3 Coder Flash",
     apiModelId: "qwen/qwen3-coder-flash",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-qwen-qwen3-coder-plus",
@@ -2001,6 +2285,7 @@ const MODELS: ProviderModel[] = [
     name: "Qwen: Qwen3 Coder Plus",
     apiModelId: "qwen/qwen3-coder-plus",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-qwen-qwen3-max",
@@ -2008,6 +2293,7 @@ const MODELS: ProviderModel[] = [
     name: "Qwen: Qwen3 Max",
     apiModelId: "qwen/qwen3-max",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-qwen-qwen3-next-80b-a3b-instruct-2509",
@@ -2015,6 +2301,7 @@ const MODELS: ProviderModel[] = [
     name: "Qwen: Qwen3 Next 80B A3B Instruct",
     apiModelId: "qwen/qwen3-next-80b-a3b-instruct",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-qwen-qwen3-vl-235b-a22b-instruct",
@@ -2022,6 +2309,7 @@ const MODELS: ProviderModel[] = [
     name: "Qwen: Qwen3 VL 235B A22B Instruct",
     apiModelId: "qwen/qwen3-vl-235b-a22b-instruct",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-qwen-qwq-32b",
@@ -2029,6 +2317,7 @@ const MODELS: ProviderModel[] = [
     name: "Qwen: QwQ 32B",
     apiModelId: "qwen/qwq-32b",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-qwen-qwen-2-5-72b-instruct",
@@ -2036,6 +2325,7 @@ const MODELS: ProviderModel[] = [
     name: "Qwen2.5 72B Instruct (free)",
     apiModelId: "qwen/qwen-2.5-72b-instruct:free",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-qwen-qwen-2-5-7b-instruct",
@@ -2043,6 +2333,7 @@ const MODELS: ProviderModel[] = [
     name: "Qwen2.5 7B Instruct",
     apiModelId: "qwen/qwen-2.5-7b-instruct",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-qwen-qwen-2-5-coder-32b-instruct",
@@ -2050,6 +2341,7 @@ const MODELS: ProviderModel[] = [
     name: "Qwen2.5 Coder 32B Instruct (free)",
     apiModelId: "qwen/qwen-2.5-coder-32b-instruct:free",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-relace-relace-apply-3",
@@ -2057,6 +2349,7 @@ const MODELS: ProviderModel[] = [
     name: "Relace: Relace Apply 3",
     apiModelId: "relace/relace-apply-3",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-undi95-remm-slerp-l2-13b",
@@ -2064,6 +2357,7 @@ const MODELS: ProviderModel[] = [
     name: "ReMM SLERP 13B",
     apiModelId: "undi95/remm-slerp-l2-13b",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-sao10k-l3-lunaris-8b",
@@ -2071,6 +2365,7 @@ const MODELS: ProviderModel[] = [
     name: "Sao10K: Llama 3 8B Lunaris",
     apiModelId: "sao10k/l3-lunaris-8b",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-sao10k-l3-euryale-70b",
@@ -2078,6 +2373,7 @@ const MODELS: ProviderModel[] = [
     name: "Sao10k: Llama 3 Euryale 70B v2.1",
     apiModelId: "sao10k/l3-euryale-70b",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-sao10k-l3-1-euryale-70b",
@@ -2085,6 +2381,7 @@ const MODELS: ProviderModel[] = [
     name: "Sao10K: Llama 3.1 Euryale 70B v2.2",
     apiModelId: "sao10k/l3.1-euryale-70b",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-sao10k-l3-3-euryale-70b-v2-3",
@@ -2092,6 +2389,7 @@ const MODELS: ProviderModel[] = [
     name: "Sao10K: Llama 3.3 Euryale 70B",
     apiModelId: "sao10k/l3.3-euryale-70b",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-shisa-ai-shisa-v2-llama3-3-70b",
@@ -2099,6 +2397,7 @@ const MODELS: ProviderModel[] = [
     name: "Shisa AI: Shisa V2 Llama 3.3 70B  (free)",
     apiModelId: "shisa-ai/shisa-v2-llama3.3-70b:free",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-raifle-sorcererlm-8x22b",
@@ -2106,6 +2405,7 @@ const MODELS: ProviderModel[] = [
     name: "SorcererLM 8x22B",
     apiModelId: "raifle/sorcererlm-8x22b",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-stepfun-ai-step3",
@@ -2113,6 +2413,7 @@ const MODELS: ProviderModel[] = [
     name: "StepFun: Step3",
     apiModelId: "stepfun-ai/step3",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-switchpoint-router",
@@ -2120,6 +2421,7 @@ const MODELS: ProviderModel[] = [
     name: "Switchpoint Router",
     apiModelId: "switchpoint/router",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-tencent-hunyuan-a13b-instruct",
@@ -2127,6 +2429,7 @@ const MODELS: ProviderModel[] = [
     name: "Tencent: Hunyuan A13B Instruct (free)",
     apiModelId: "tencent/hunyuan-a13b-instruct:free",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-thedrummer-anubis-70b-v1-1",
@@ -2134,6 +2437,7 @@ const MODELS: ProviderModel[] = [
     name: "TheDrummer: Anubis 70B V1.1",
     apiModelId: "thedrummer/anubis-70b-v1.1",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-thedrummer-cydonia-24b-v4-1",
@@ -2141,6 +2445,7 @@ const MODELS: ProviderModel[] = [
     name: "TheDrummer: Cydonia 24B V4.1",
     apiModelId: "thedrummer/cydonia-24b-v4.1",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-thedrummer-rocinante-12b",
@@ -2148,6 +2453,7 @@ const MODELS: ProviderModel[] = [
     name: "TheDrummer: Rocinante 12B",
     apiModelId: "thedrummer/rocinante-12b",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-thedrummer-skyfall-36b-v2",
@@ -2155,6 +2461,7 @@ const MODELS: ProviderModel[] = [
     name: "TheDrummer: Skyfall 36B V2",
     apiModelId: "thedrummer/skyfall-36b-v2",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-thedrummer-unslopnemo-12b",
@@ -2162,6 +2469,7 @@ const MODELS: ProviderModel[] = [
     name: "TheDrummer: UnslopNemo 12B",
     apiModelId: "thedrummer/unslopnemo-12b",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-thudm-glm-z1-32b-0414",
@@ -2169,6 +2477,7 @@ const MODELS: ProviderModel[] = [
     name: "THUDM: GLM Z1 32B",
     apiModelId: "thudm/glm-z1-32b",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-tngtech-deepseek-r1t-chimera",
@@ -2176,6 +2485,7 @@ const MODELS: ProviderModel[] = [
     name: "TNG: DeepSeek R1T Chimera (free)",
     apiModelId: "tngtech/deepseek-r1t-chimera:free",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-tngtech-deepseek-r1t2-chimera",
@@ -2183,6 +2493,7 @@ const MODELS: ProviderModel[] = [
     name: "TNG: DeepSeek R1T2 Chimera (free)",
     apiModelId: "tngtech/deepseek-r1t2-chimera:free",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-alibaba-tongyi-deepresearch-30b-a3b",
@@ -2190,6 +2501,7 @@ const MODELS: ProviderModel[] = [
     name: "Tongyi DeepResearch 30B A3B (free)",
     apiModelId: "alibaba/tongyi-deepresearch-30b-a3b:free",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-venice-uncensored",
@@ -2197,6 +2509,7 @@ const MODELS: ProviderModel[] = [
     name: "Venice: Uncensored (free)",
     apiModelId: "cognitivecomputations/dolphin-mistral-24b-venice-edition:free",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-microsoft-wizardlm-2-8x22b",
@@ -2204,6 +2517,7 @@ const MODELS: ProviderModel[] = [
     name: "WizardLM-2 8x22B",
     apiModelId: "microsoft/wizardlm-2-8x22b",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-x-ai-grok-3",
@@ -2211,6 +2525,7 @@ const MODELS: ProviderModel[] = [
     name: "xAI: Grok 3",
     apiModelId: "x-ai/grok-3",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-x-ai-grok-3-beta",
@@ -2218,6 +2533,7 @@ const MODELS: ProviderModel[] = [
     name: "xAI: Grok 3 Beta",
     apiModelId: "x-ai/grok-3-beta",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-x-ai-grok-3-mini",
@@ -2225,6 +2541,7 @@ const MODELS: ProviderModel[] = [
     name: "xAI: Grok 3 Mini",
     apiModelId: "x-ai/grok-3-mini",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-x-ai-grok-3-mini-beta",
@@ -2232,6 +2549,7 @@ const MODELS: ProviderModel[] = [
     name: "xAI: Grok 3 Mini Beta",
     apiModelId: "x-ai/grok-3-mini-beta",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-x-ai-grok-4-07-09",
@@ -2239,6 +2557,7 @@ const MODELS: ProviderModel[] = [
     name: "xAI: Grok 4",
     apiModelId: "x-ai/grok-4",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-x-ai-grok-4-fast",
@@ -2246,6 +2565,7 @@ const MODELS: ProviderModel[] = [
     name: "xAI: Grok 4 Fast (free)",
     apiModelId: "x-ai/grok-4-fast:free",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-x-ai-grok-code-fast-1",
@@ -2253,6 +2573,7 @@ const MODELS: ProviderModel[] = [
     name: "xAI: Grok Code Fast 1",
     apiModelId: "x-ai/grok-code-fast-1",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-z-ai-glm-4-32b-0414",
@@ -2260,6 +2581,7 @@ const MODELS: ProviderModel[] = [
     name: "Z.AI: GLM 4 32B ",
     apiModelId: "z-ai/glm-4-32b",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-z-ai-glm-4-5",
@@ -2267,6 +2589,7 @@ const MODELS: ProviderModel[] = [
     name: "Z.AI: GLM 4.5",
     apiModelId: "z-ai/glm-4.5",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-z-ai-glm-4-5-air",
@@ -2274,6 +2597,7 @@ const MODELS: ProviderModel[] = [
     name: "Z.AI: GLM 4.5 Air (free)",
     apiModelId: "z-ai/glm-4.5-air:free",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-z-ai-glm-4-5v",
@@ -2281,6 +2605,7 @@ const MODELS: ProviderModel[] = [
     name: "Z.AI: GLM 4.5V",
     apiModelId: "z-ai/glm-4.5v",
     hasReasoning: false,
+    canDisableThinking: false,
   },
   {
     id: "openrouter-z-ai-glm-4-6",
@@ -2288,6 +2613,7 @@ const MODELS: ProviderModel[] = [
     name: "Z.AI: GLM 4.6",
     apiModelId: "z-ai/glm-4.6",
     hasReasoning: false,
+    canDisableThinking: false,
   },
 ];
 

@@ -287,8 +287,9 @@ export function AiButton({
 							<div className="flex items-start gap-2 p-3 rounded-md bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800">
 								<Clock className="w-4 h-4 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
 								<p className="text-xs text-blue-600 dark:text-blue-400">
-									This model supports advanced reasoning which may take longer to
-									respond. Thinking/reasoning is disabled for faster responses.
+									{activeModel.canDisableThinking
+										? "This model supports advanced reasoning which may take longer to respond. Thinking/reasoning is disabled for faster responses."
+										: "This model requires advanced reasoning mode and may take longer to respond."}
 								</p>
 							</div>
 						)}
