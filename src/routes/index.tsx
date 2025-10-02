@@ -22,6 +22,7 @@ import CodeMirror, { EditorView, keymap } from "@uiw/react-codemirror";
 import { generateText } from "ai";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AiButton } from "@/components/ai-button";
+import { ChromeFeaturesModal } from "@/components/chrome-features-modal";
 import { MenuButton } from "@/components/menu-button";
 import { OnboardingModal } from "@/components/onboarding-modal";
 import { RewriterDialog } from "@/components/rewriter-dialog";
@@ -29,11 +30,13 @@ import { TextSelectionMenu } from "@/components/text-selection-menu";
 import { useEditorPersistence } from "@/hooks/use-editor-persistence";
 import { useSettingsPersistence } from "@/hooks/use-settings-persistence";
 import { aiCompletion } from "@/lib/completion";
+import { generatePrompt } from "@/lib/prompt-api";
 import {
 	createProviderModel,
 	getDisabledThinkingOptions,
 	isInteractiveElement,
 } from "@/lib/provider-models";
+import { checkRewriterSupport } from "@/lib/rewriter";
 import { getHotkeyDisplay, stripReasoningContent } from "@/lib/utils";
 
 const STORAGE_KEY = "editor-state";
@@ -75,6 +78,7 @@ function Home() {
 	const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 	const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 	const [isRewriterDialogOpen, setIsRewriterDialogOpen] = useState(false);
+	const [rewriterSupported, setRewriterSupported] = useState(false);
 	const [selectedText, setSelectedText] = useState("");
 	const [selectionRange, setSelectionRange] = useState<{
 		from: number;
@@ -98,19 +102,23 @@ function Home() {
 		aiFeature,
 		rewriter,
 		onboarding,
+		chromeFeatures,
 		isReady: isSettingsReady,
 		selectProvider,
 		setModelId,
 		setApiKey,
 		setUseDemoApi,
+		setAiMode,
 		setAutoGenerationEnabled,
 		setSpellcheckEnabled,
 		setAiFeatureEnabled,
 		setRewriterEnabled,
 		setHasSeenOnboarding,
+		setHasSeenChromeFeatures,
 	} = settingsHook;
 	const activeApiKey = activeEntry.apiKey;
 	const useDemoApi = demo.useDemoApi;
+	const aiMode = demo.aiMode;
 
 	const hotkeyDisplay = useMemo(() => {
 		return getHotkeyDisplay(AI_COMPLETION_HOTKEY, os);
@@ -139,14 +147,14 @@ function Home() {
 	}, []);
 
 	const handleOnboardingComplete = useCallback(
-		(useDemoApi: boolean, openSettings: boolean) => {
-			setUseDemoApi(useDemoApi);
+		(aiMode: "demo" | "local" | "chrome", openSettings: boolean) => {
+			setAiMode(aiMode);
 			setHasSeenOnboarding(true);
 			if (openSettings) {
 				setIsSettingsOpen(true);
 			}
 		},
-		[setUseDemoApi, setHasSeenOnboarding],
+		[setAiMode, setHasSeenOnboarding],
 	);
 
 	const handleRewriteClick = useCallback(() => {
@@ -235,6 +243,12 @@ function Home() {
 		};
 	}, [handleGlobalClick]);
 
+	useEffect(() => {
+		checkRewriterSupport().then((result) => {
+			setRewriterSupported(result.supported);
+		});
+	}, []);
+
 	const extensions = useMemo(
 		() => [
 			EditorView.lineWrapping,
@@ -264,7 +278,31 @@ function Home() {
 				command:
 					"Write the continuation that fits between the provided prefix and suffix. Mirror the user's emotional tone, voice, and pacing. Avoid repeating suffix content. Limit to 30 words and allow incomplete endings.",
 				insert: async ({ onTextChange, abortSignal, ...promptParams }) => {
-					if (useDemoApi) {
+					if (aiMode === "chrome") {
+						const promptText = `Insert new content at <CURRENTCURSOR/> in the document (USERDOCUMENT) according to the USERCOMMAND.
+Insert content at the cursor position only, do not change other text.
+Ensure the inserted passage matches the emotional tone, voice, and pacing of the surrounding USERDOCUMENT content.
+Avoid repeating text that already appears immediately after <CURRENTCURSOR/>.
+
+<USERDOCUMENT>${promptParams.prefix}<CURRENTCURSOR/>${promptParams.suffix}</USERDOCUMENT>
+
+USERCOMMAND: ${promptParams.command}
+
+Output the inserted content only, do not explain. Please mind the spacing and indentation.`;
+
+						const result = await generatePrompt(promptText, {
+							systemPrompt: "You are an AI writing assistant that inserts text at cursor positions while mirroring the user's emotional tone and voice. Only output the inserted content without explanations.",
+							temperature: 0.8,
+							topK: 8,
+							signal: abortSignal,
+						});
+
+						if (!result) {
+							throw new Error("Chrome AI request failed");
+						}
+
+						onTextChange(stripReasoningContent(result));
+					} else if (useDemoApi) {
 						const response = await fetch("/api/chat", {
 							method: "POST",
 							headers: {
@@ -348,6 +386,7 @@ Output the inserted content only, do not explain. Please mind the spacing and in
 			activeModel,
 			provider,
 			useDemoApi,
+			aiMode,
 			autoGeneration.enabled,
 			spellcheck.enabled,
 			aiFeature.enabled,
@@ -365,6 +404,16 @@ Output the inserted content only, do not explain. Please mind the spacing and in
 			<OnboardingModal
 				isOpen={!onboarding.hasSeenOnboarding}
 				onComplete={handleOnboardingComplete}
+			/>
+			<ChromeFeaturesModal
+				isOpen={
+					rewriterSupported &&
+					onboarding.hasSeenOnboarding &&
+					!chromeFeatures.hasSeenChromeFeatures
+				}
+				onClose={() => setHasSeenChromeFeatures(true)}
+				rewriterEnabled={rewriter.enabled}
+				onRewriterToggle={setRewriterEnabled}
 			/>
 			<div className="flex flex-col gap-2">
 				<div className="flex justify-between items-center py-4 px-4 container mx-auto">
@@ -389,6 +438,7 @@ Output the inserted content only, do not explain. Please mind the spacing and in
 								setModelId={setModelId}
 								setApiKey={setApiKey}
 								setUseDemoApi={setUseDemoApi}
+								setAiMode={setAiMode}
 								setAutoGenerationEnabled={setAutoGenerationEnabled}
 							/>
 						)}

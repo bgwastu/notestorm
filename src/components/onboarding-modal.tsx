@@ -1,6 +1,6 @@
 import { useOs } from "@mantine/hooks";
-import { Key, Sparkles } from "lucide-react";
-import { useMemo, useState } from "react";
+import { Bot, Key, Sparkles } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
 	Dialog,
@@ -8,17 +8,19 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@/components/ui/dialog";
+import { checkPromptApiSupport } from "@/lib/prompt-api";
 
 interface OnboardingModalProps {
 	isOpen: boolean;
-	onComplete: (useDemoApi: boolean, openSettings: boolean) => void;
+	onComplete: (aiMode: "demo" | "local" | "chrome", openSettings: boolean) => void;
 }
 
 export function OnboardingModal({ isOpen, onComplete }: OnboardingModalProps) {
 	const os = useOs();
-	const [selectedOption, setSelectedOption] = useState<"demo" | "local">(
+	const [selectedOption, setSelectedOption] = useState<"demo" | "local" | "chrome">(
 		"demo",
 	);
+	const [chromeAiSupported, setChromeAiSupported] = useState(false);
 
 	const isMobile = useMemo(() => {
 		return os === "android" || os === "ios";
@@ -28,10 +30,17 @@ export function OnboardingModal({ isOpen, onComplete }: OnboardingModalProps) {
 		return os === "macos" || os === "ios" ? "⌘" : "Ctrl";
 	}, [os]);
 
+	useEffect(() => {
+		if (!isOpen) return;
+
+		checkPromptApiSupport().then((result) => {
+			setChromeAiSupported(result.supported);
+		});
+	}, [isOpen]);
+
 	const handleComplete = () => {
-		const useDemoApi = selectedOption === "demo";
 		const openSettings = selectedOption === "local";
-		onComplete(useDemoApi, openSettings);
+		onComplete(selectedOption, openSettings);
 	};
 
 	return (
@@ -92,7 +101,7 @@ export function OnboardingModal({ isOpen, onComplete }: OnboardingModalProps) {
 						<p className="text-xs sm:text-sm font-medium text-center">
 							Choose how to use AI:
 						</p>
-						<div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+						<div className={`grid grid-cols-1 gap-2 sm:gap-3 ${chromeAiSupported ? "sm:grid-cols-3" : "sm:grid-cols-2"}`}>
 							<button
 								type="button"
 								onClick={() => setSelectedOption("demo")}
@@ -112,6 +121,27 @@ export function OnboardingModal({ isOpen, onComplete }: OnboardingModalProps) {
 									Try it instantly with our demo API (rate limited)
 								</div>
 							</button>
+							{chromeAiSupported && (
+								<button
+									type="button"
+									onClick={() => setSelectedOption("chrome")}
+									className={`flex flex-col gap-2 sm:gap-3 p-3 sm:p-4 rounded-lg border-2 transition-all ${
+										selectedOption === "chrome"
+											? "border-primary bg-primary/5"
+											: "border-border hover:border-primary/50"
+									}`}
+								>
+									<div className="flex flex-col items-center gap-1.5 sm:gap-2">
+										<Bot className="w-4 h-4 text-muted-foreground" />
+										<span className="font-medium text-sm sm:text-base">
+											Chrome AI
+										</span>
+									</div>
+									<div className="text-xs text-muted-foreground text-center">
+										Use Chrome's built-in AI (free, private, offline)
+									</div>
+								</button>
+							)}
 							<button
 								type="button"
 								onClick={() => setSelectedOption("local")}
