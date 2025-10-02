@@ -28,8 +28,8 @@ import { useSettingsPersistence } from "@/hooks/use-settings-persistence";
 import { aiCompletion } from "@/lib/completion";
 import {
 	createProviderModel,
-	isInteractiveElement,
 	getDisabledThinkingOptions,
+	isInteractiveElement,
 } from "@/lib/provider-models";
 import { getHotkeyDisplay, stripReasoningContent } from "@/lib/utils";
 
@@ -300,17 +300,19 @@ Output the inserted content only, do not explain. Please mind the spacing and in
 					/>
 					</div>
 				</div>
-				<CodeMirror
-					value={value}
-					onChange={handleChange}
-					initialState={initialState}
-					extensions={extensions}
-					placeholder="Write something..."
-					autoFocus
-					theme={theme}
-					basicSetup={false}
-					onCreateEditor={handleEditorCreate}
-				/>
+				<div className="container mx-auto px-4">
+					<CodeMirror
+						value={value}
+						onChange={handleChange}
+						initialState={initialState}
+						extensions={extensions}
+						placeholder="Write something..."
+						autoFocus
+						theme={theme}
+						basicSetup={false}
+						onCreateEditor={handleEditorCreate}
+					/>
+				</div>
 			</div>
 		</>
 	);
