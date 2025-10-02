@@ -11,6 +11,7 @@ import {
 import { markdown, markdownLanguage } from "@codemirror/lang-markdown";
 import { languages } from "@codemirror/language-data";
 import { searchKeymap } from "@codemirror/search";
+import { EditorSelection, Prec } from "@codemirror/state";
 import type { ViewUpdate } from "@codemirror/view";
 import { tags as t } from "@lezer/highlight";
 import { useOs } from "@mantine/hooks";
@@ -23,6 +24,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AiButton } from "@/components/ai-button";
 import { MenuButton } from "@/components/menu-button";
 import { OnboardingModal } from "@/components/onboarding-modal";
+import { RewriterDialog } from "@/components/rewriter-dialog";
+import { TextSelectionMenu } from "@/components/text-selection-menu";
 import { useEditorPersistence } from "@/hooks/use-editor-persistence";
 import { useSettingsPersistence } from "@/hooks/use-settings-persistence";
 import { aiCompletion } from "@/lib/completion";
@@ -71,6 +74,12 @@ function Home() {
 	const editorRef = useRef<EditorView | null>(null);
 	const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 	const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+	const [isRewriterDialogOpen, setIsRewriterDialogOpen] = useState(false);
+	const [selectedText, setSelectedText] = useState("");
+	const [selectionRange, setSelectionRange] = useState<{
+		from: number;
+		to: number;
+	} | null>(null);
 	const isMobile = useMemo(() => {
 		return os === "android" || os === "ios";
 	}, [os]);
@@ -87,6 +96,7 @@ function Home() {
 		autoGeneration,
 		spellcheck,
 		aiFeature,
+		rewriter,
 		onboarding,
 		isReady: isSettingsReady,
 		selectProvider,
@@ -96,6 +106,7 @@ function Home() {
 		setAutoGenerationEnabled,
 		setSpellcheckEnabled,
 		setAiFeatureEnabled,
+		setRewriterEnabled,
 		setHasSeenOnboarding,
 	} = settingsHook;
 	const activeApiKey = activeEntry.apiKey;
@@ -138,6 +149,84 @@ function Home() {
 		[setUseDemoApi, setHasSeenOnboarding],
 	);
 
+	const handleRewriteClick = useCallback(() => {
+		if (!editorRef.current) {
+			return;
+		}
+
+		const { from, to } = editorRef.current.state.selection.main;
+		if (from === to) {
+			return;
+		}
+
+		const text = editorRef.current.state.doc.sliceString(from, to);
+		if (!text.trim()) {
+			return;
+		}
+
+		setSelectedText(text);
+		setSelectionRange({ from, to });
+		setIsRewriterDialogOpen(true);
+	}, []);
+
+	const handleInsertRewrittenText = useCallback(
+		(rewrittenText: string) => {
+			if (!editorRef.current || !selectionRange) {
+				return;
+			}
+
+			const { from, to } = selectionRange;
+
+			editorRef.current.dispatch(
+				editorRef.current.state.changeByRange(() => ({
+					changes: { from, to, insert: rewrittenText },
+					range: EditorSelection.range(from, from + rewrittenText.length),
+				})),
+			);
+			setSelectionRange(null);
+			setSelectedText("");
+		},
+		[selectionRange],
+	);
+
+	const rewriterKeymap = useMemo(
+		() =>
+			rewriter.enabled
+				? [
+						Prec.highest(
+							keymap.of([
+								{
+									key: "Mod-k",
+									preventDefault: true,
+									run: (view: EditorView) => {
+										const { from, to } = view.state.selection.main;
+										if (from === to) {
+											return false;
+										}
+										const text = view.state.doc.sliceString(from, to);
+										if (!text.trim()) {
+											return false;
+										}
+										setSelectedText(text);
+										setSelectionRange({ from, to });
+										setIsRewriterDialogOpen(true);
+										return true;
+									},
+								},
+							]),
+						),
+					]
+				: [],
+		[rewriter.enabled],
+	);
+
+	const filteredVscodeKeymap = useMemo(() => {
+		return vscodeKeymap.filter((binding) => {
+			const key = binding.key || "";
+			return !key.startsWith("Mod-k");
+		});
+	}, []);
+
 	useEffect(() => {
 		document.addEventListener("click", handleGlobalClick);
 
@@ -150,8 +239,9 @@ function Home() {
 		() => [
 			EditorView.lineWrapping,
 			history(),
+			...rewriterKeymap,
 			keymap.of([
-				...vscodeKeymap,
+				...filteredVscodeKeymap,
 				...closeBracketsKeymap,
 				...defaultKeymap,
 				...searchKeymap,
@@ -253,7 +343,17 @@ Output the inserted content only, do not explain. Please mind the spacing and in
 				},
 			})] : []),
 		],
-		[activeApiKey, activeModel, provider, useDemoApi, autoGeneration.enabled, spellcheck.enabled, aiFeature.enabled],
+		[
+			activeApiKey,
+			activeModel,
+			provider,
+			useDemoApi,
+			autoGeneration.enabled,
+			spellcheck.enabled,
+			aiFeature.enabled,
+			rewriterKeymap,
+			filteredVscodeKeymap,
+		],
 	);
 
 	if (!isReady || !isSettingsReady) {
@@ -293,11 +393,13 @@ Output the inserted content only, do not explain. Please mind the spacing and in
 							/>
 						)}
 						<MenuButton
-						spellcheckEnabled={spellcheck.enabled}
-						onSpellcheckToggle={setSpellcheckEnabled}
-						aiFeatureEnabled={aiFeature.enabled}
-						onAiFeatureToggle={setAiFeatureEnabled}
-					/>
+							spellcheckEnabled={spellcheck.enabled}
+							onSpellcheckToggle={setSpellcheckEnabled}
+							aiFeatureEnabled={aiFeature.enabled}
+							onAiFeatureToggle={setAiFeatureEnabled}
+							rewriterEnabled={rewriter.enabled}
+							onRewriterToggle={setRewriterEnabled}
+						/>
 					</div>
 				</div>
 				<div className="container mx-auto px-4">
@@ -314,6 +416,17 @@ Output the inserted content only, do not explain. Please mind the spacing and in
 					/>
 				</div>
 			</div>
+			{rewriter.enabled && (
+				<>
+					<TextSelectionMenu onRewrite={handleRewriteClick} />
+					<RewriterDialog
+						isOpen={isRewriterDialogOpen}
+						onOpenChange={setIsRewriterDialogOpen}
+						originalText={selectedText}
+						onInsert={handleInsertRewrittenText}
+					/>
+				</>
+			)}
 		</>
 	);
 }
