@@ -24,6 +24,13 @@ const KNOWN_REASONING_MODELS = new Set([
   "gemini-2.0-flash",
 ]);
 
+// Models that REQUIRE thinking and cannot have it disabled
+// These models will throw errors if you try to disable thinking
+const THINKING_REQUIRED_MODELS = new Set([
+  "gemini-2.5-pro",
+  "gemini-2.5-pro-preview-06-05",
+]);
+
 async function fetchJson(url) {
   const response = await fetch(url);
   if (!response.ok) {
@@ -81,12 +88,21 @@ function normalizeChatwiseModels(rawModels) {
       model.capabilities?.reasoning === true ||
       KNOWN_REASONING_MODELS.has(apiModelId);
 
+    // Check if thinking can be disabled
+    // If model is in THINKING_REQUIRED_MODELS, thinking cannot be disabled
+    // Otherwise, if model has reasoning and disableReasoning is true, it can be disabled
+    const canDisableThinking =
+      hasReasoning &&
+      !THINKING_REQUIRED_MODELS.has(apiModelId) &&
+      model.capabilities?.disableReasoning === true;
+
     const entry = {
       id,
       provider,
       name: typeof model.name === "string" && model.name ? model.name : id,
       apiModelId,
       hasReasoning,
+      canDisableThinking,
     };
     entries.push(entry);
     seen.add(id);
@@ -124,6 +140,7 @@ function normalizeOpenRouterModels(rawModels) {
       name,
       apiModelId,
       hasReasoning: false,
+      canDisableThinking: false,
     });
   }
 
@@ -163,11 +180,12 @@ function generateSource(models) {
     name: "${model.name.replace(/"/g, '\\"')}",
     apiModelId: "${model.apiModelId}",
     hasReasoning: ${model.hasReasoning},
+    canDisableThinking: ${model.canDisableThinking},
   },`,
     )
     .join("\n");
 
-  return `export type SettingsProvider =\n${providerUnion};\n\nexport type ProviderModel = {\n  id: string;\n  provider: SettingsProvider;\n  name: string;\n  apiModelId: string;\n  hasReasoning: boolean;\n};\n\nconst MODELS: ProviderModel[] = [\n${modelEntries}\n];\n\nexport function listModels() {\n  return MODELS;\n}\n\nexport function listModelsByProvider(provider: SettingsProvider) {\n  return MODELS.filter((model) => model.provider === provider);\n}\n\nexport function findModelById(id: string) {\n  return MODELS.find((model) => model.id === id);\n}\n\nexport function modelSupportsReasoning(model: ProviderModel): boolean {\n  return model.hasReasoning;\n}\n`;
+  return `export type SettingsProvider =\n${providerUnion};\n\nexport type ProviderModel = {\n  id: string;\n  provider: SettingsProvider;\n  name: string;\n  apiModelId: string;\n  hasReasoning: boolean;\n  canDisableThinking: boolean;\n};\n\nconst MODELS: ProviderModel[] = [\n${modelEntries}\n];\n\nexport function listModels() {\n  return MODELS;\n}\n\nexport function listModelsByProvider(provider: SettingsProvider) {\n  return MODELS.filter((model) => model.provider === provider);\n}\n\nexport function findModelById(id: string) {\n  return MODELS.find((model) => model.id === id);\n}\n\nexport function modelSupportsReasoning(model: ProviderModel): boolean {\n  return model.hasReasoning;\n}\n`;
 }
 
 async function main() {
