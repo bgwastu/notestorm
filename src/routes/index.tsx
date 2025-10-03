@@ -32,6 +32,7 @@ import {
 	isInteractiveElement,
 } from "@/lib/provider-models";
 import { getHotkeyDisplay, stripReasoningContent } from "@/lib/utils";
+import { indentationWrap } from "@/lib/indent-wrap";
 
 const STORAGE_KEY = "editor-state";
 const SETTINGS_STORAGE_KEY = "ai-settings";
@@ -149,6 +150,7 @@ function Home() {
 	const extensions = useMemo(
 		() => [
 			EditorView.lineWrapping,
+			...indentationWrap,
 			history(),
 			keymap.of([
 				...vscodeKeymap,
