@@ -8,6 +8,8 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@/components/ui/dialog";
+import { KEYBOARD_SHORTCUTS } from "@/lib/constants";
+import { getKeyboardShortcutLabel } from "@/lib/keyboard-shortcuts";
 import { checkPromptApiSupport } from "@/lib/prompt-api";
 
 interface OnboardingModalProps {
@@ -26,8 +28,8 @@ export function OnboardingModal({ isOpen, onComplete }: OnboardingModalProps) {
 		return os === "android" || os === "ios";
 	}, [os]);
 
-	const modifierKey = useMemo(() => {
-		return os === "macos" || os === "ios" ? "⌘" : "Ctrl";
+	const aiCompletionShortcut = useMemo(() => {
+		return getKeyboardShortcutLabel(KEYBOARD_SHORTCUTS.AI_COMPLETION, os);
 	}, [os]);
 
 	useEffect(() => {
@@ -75,11 +77,11 @@ export function OnboardingModal({ isOpen, onComplete }: OnboardingModalProps) {
 									AI will automatically suggest text as you write. Tap the
 									suggestion to accept it, or press{" "}
 									<kbd className="px-1.5 py-0.5 bg-background text-foreground rounded text-xs font-mono border">
-										{modifierKey}
+										{aiCompletionShortcut.modifier}
 									</kbd>{" "}
 									+{" "}
 									<kbd className="px-1.5 py-0.5 bg-background text-foreground rounded text-xs font-mono border">
-										I
+										{aiCompletionShortcut.key}
 									</kbd>{" "}
 									if using a keyboard
 								</p>
@@ -87,11 +89,11 @@ export function OnboardingModal({ isOpen, onComplete }: OnboardingModalProps) {
 								<p className="text-xs sm:text-sm text-muted-foreground">
 									Press{" "}
 									<kbd className="px-1.5 py-0.5 bg-background text-foreground rounded text-xs font-mono border">
-										{modifierKey}
+										{aiCompletionShortcut.modifier}
 									</kbd>{" "}
 									+{" "}
 									<kbd className="px-1.5 py-0.5 bg-background text-foreground rounded text-xs font-mono border">
-										I
+										{aiCompletionShortcut.key}
 									</kbd>{" "}
 									to get AI suggestions as you write
 								</p>
