@@ -21,7 +21,6 @@ import { createTheme } from "@uiw/codemirror-themes";
 import CodeMirror, { EditorView, keymap } from "@uiw/react-codemirror";
 import { generateText } from "ai";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { AiButton } from "@/components/ai-button";
 import { ChromeFeaturesModal } from "@/components/chrome-features-modal";
 import { MenuButton } from "@/components/menu-button";
 import { OnboardingModal } from "@/components/onboarding-modal";
@@ -37,7 +36,7 @@ import {
 	isInteractiveElement,
 } from "@/lib/provider-models";
 import { checkRewriterSupport } from "@/lib/rewriter";
-import { getHotkeyDisplay, stripReasoningContent } from "@/lib/utils";
+import { stripReasoningContent } from "@/lib/utils";
 
 const STORAGE_KEY = "editor-state";
 const SETTINGS_STORAGE_KEY = "ai-settings";
@@ -75,8 +74,6 @@ export const Route = createFileRoute("/")({
 function Home() {
 	const os = useOs();
 	const editorRef = useRef<EditorView | null>(null);
-	const [isPopoverOpen, setIsPopoverOpen] = useState(false);
-	const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 	const [isRewriterDialogOpen, setIsRewriterDialogOpen] = useState(false);
 	const [rewriterSupported, setRewriterSupported] = useState(false);
 	const [selectedText, setSelectedText] = useState("");
@@ -107,7 +104,6 @@ function Home() {
 		selectProvider,
 		setModelId,
 		setApiKey,
-		setUseDemoApi,
 		setAiMode,
 		setAutoGenerationEnabled,
 		setSpellcheckEnabled,
@@ -119,10 +115,6 @@ function Home() {
 	const activeApiKey = activeEntry.apiKey;
 	const useDemoApi = demo.useDemoApi;
 	const aiMode = demo.aiMode;
-
-	const hotkeyDisplay = useMemo(() => {
-		return getHotkeyDisplay(AI_COMPLETION_HOTKEY, os);
-	}, [os]);
 
 	const handleChange = useCallback(
 		(nextValue: string, viewUpdate: ViewUpdate) => {
@@ -147,12 +139,9 @@ function Home() {
 	}, []);
 
 	const handleOnboardingComplete = useCallback(
-		(aiMode: "demo" | "local" | "chrome", openSettings: boolean) => {
+		(aiMode: "demo" | "local" | "chrome") => {
 			setAiMode(aiMode);
 			setHasSeenOnboarding(true);
-			if (openSettings) {
-				setIsSettingsOpen(true);
-			}
 		},
 		[setAiMode, setHasSeenOnboarding],
 	);
@@ -269,17 +258,23 @@ function Home() {
 			EditorView.contentAttributes.of({
 				spellcheck: spellcheck.enabled ? "true" : "false",
 			}),
-			...(aiFeature.enabled ? [aiCompletion({
-				hotkey: AI_COMPLETION_HOTKEY,
-				autoTriggerDelay: autoGeneration.enabled
-					? AUTO_TRIGGER_DELAY
-					: undefined,
-				suppressAutoErrors: autoGeneration.enabled,
-				command:
-					"Write the continuation that fits between the provided prefix and suffix. Mirror the user's emotional tone, voice, and pacing. Avoid repeating suffix content. Limit to 30 words and allow incomplete endings.",
-				insert: async ({ onTextChange, abortSignal, ...promptParams }) => {
-					if (aiMode === "chrome") {
-						const promptText = `Insert new content at <CURRENTCURSOR/> in the document (USERDOCUMENT) according to the USERCOMMAND.
+			...(aiFeature.enabled
+				? [
+						aiCompletion({
+							hotkey: AI_COMPLETION_HOTKEY,
+							autoTriggerDelay: autoGeneration.enabled
+								? AUTO_TRIGGER_DELAY
+								: undefined,
+							suppressAutoErrors: autoGeneration.enabled,
+							command:
+								"Write the continuation that fits between the provided prefix and suffix. Mirror the user's emotional tone, voice, and pacing. Avoid repeating suffix content. Limit to 30 words and allow incomplete endings.",
+							insert: async ({
+								onTextChange,
+								abortSignal,
+								...promptParams
+							}) => {
+								if (aiMode === "chrome") {
+									const promptText = `Insert new content at <CURRENTCURSOR/> in the document (USERDOCUMENT) according to the USERCOMMAND.
 Insert content at the cursor position only, do not change other text.
 Ensure the inserted passage matches the emotional tone, voice, and pacing of the surrounding USERDOCUMENT content.
 Avoid repeating text that already appears immediately after <CURRENTCURSOR/>.
@@ -290,96 +285,104 @@ USERCOMMAND: ${promptParams.command}
 
 Output the inserted content only, do not explain. Please mind the spacing and indentation.`;
 
-						const result = await generatePrompt(promptText, {
-							systemPrompt: "You are an AI writing assistant that inserts text at cursor positions while mirroring the user's emotional tone and voice. Only output the inserted content without explanations.",
-							temperature: 0.8,
-							topK: 8,
-							signal: abortSignal,
-						});
+									const result = await generatePrompt(promptText, {
+										systemPrompt:
+											"You are an AI writing assistant that inserts text at cursor positions while mirroring the user's emotional tone and voice. Only output the inserted content without explanations.",
+										temperature: 0.8,
+										topK: 8,
+										signal: abortSignal,
+									});
 
-						if (!result) {
-							throw new Error("Chrome AI request failed");
-						}
+									if (!result) {
+										throw new Error("Chrome AI request failed");
+									}
 
-						onTextChange(stripReasoningContent(result));
-					} else if (useDemoApi) {
-						const response = await fetch("/api/chat", {
-							method: "POST",
-							headers: {
-								"Content-Type": "application/json",
+									onTextChange(stripReasoningContent(result));
+								} else if (useDemoApi) {
+									const response = await fetch("/api/chat", {
+										method: "POST",
+										headers: {
+											"Content-Type": "application/json",
+										},
+										body: JSON.stringify({
+											messages: [
+												{
+													role: "user",
+													content: `
+You are an AI writing assistant that inserts text at cursor positions while mirroring the user's emotional tone and voice. Only output the inserted content without explanations.
+
+Insert new content at <CURRENTCURSOR/> in the document (USERDOCUMENT) according to the USERCOMMAND.
+Insert content at the cursor position only, do not change other text.
+Ensure the inserted passage matches the emotional tone, voice, and pacing of the surrounding USERDOCUMENT content.
+Avoid repeating text that already appears immediately after <CURRENTCURSOR/>.
+
+<USERDOCUMENT>${promptParams.prefix}<CURRENTCURSOR/>${promptParams.suffix}</USERDOCUMENT>
+
+USERCOMMAND: ${promptParams.command}
+
+Output the inserted content only, do not explain. Please mind the spacing and indentation.
+`.trim(),
+												},
+											],
+										}),
+										signal: abortSignal,
+									});
+
+									if (!response.ok) {
+										const errorData = await response.json().catch(() => ({}));
+										if (response.status === 429) {
+											const retryAfter = errorData.retryAfter || 10;
+											throw new Error(
+												`Rate limit exceeded. Please wait ${retryAfter} seconds before trying again.`,
+											);
+										}
+										throw new Error(
+											errorData.error || "Demo API request failed",
+										);
+									}
+
+									const data = await response.json();
+									onTextChange(stripReasoningContent(data.text));
+								} else {
+									if (!activeApiKey) {
+										throw new Error("Add an API key in Settings.");
+									}
+									if (!activeModel) {
+										throw new Error("Select a model in Settings.");
+									}
+									const model = await createProviderModel(
+										provider,
+										activeApiKey,
+										activeModel.apiModelId,
+									);
+									const response = await generateText({
+										model,
+										prompt: `
+You are an AI writing assistant that inserts text at cursor positions while mirroring the user's emotional tone and voice. Only output the inserted content without explanations.
+
+Insert new content at <CURRENTCURSOR/> in the document (USERDOCUMENT) according to the USERCOMMAND.
+Insert content at the cursor position only, do not change other text.
+Ensure the inserted passage matches the emotional tone, voice, and pacing of the surrounding USERDOCUMENT content.
+Avoid repeating text that already appears immediately after <CURRENTCURSOR/>.
+
+<USERDOCUMENT>${promptParams.prefix}<CURRENTCURSOR/>${promptParams.suffix}</USERDOCUMENT>
+
+USERCOMMAND: ${promptParams.command}
+
+Output the inserted content only, do not explain. Please mind the spacing and indentation.
+`.trim(),
+										abortSignal,
+										providerOptions: getDisabledThinkingOptions(
+											provider,
+											activeModel,
+										),
+									});
+									onTextChange(stripReasoningContent(response.text));
+								}
 							},
-							body: JSON.stringify({
-								messages: [
-									{
-										role: "user",
-										content: `
-You are an AI writing assistant that inserts text at cursor positions while mirroring the user's emotional tone and voice. Only output the inserted content without explanations.
-
-Insert new content at <CURRENTCURSOR/> in the document (USERDOCUMENT) according to the USERCOMMAND.
-Insert content at the cursor position only, do not change other text.
-Ensure the inserted passage matches the emotional tone, voice, and pacing of the surrounding USERDOCUMENT content.
-Avoid repeating text that already appears immediately after <CURRENTCURSOR/>.
-
-<USERDOCUMENT>${promptParams.prefix}<CURRENTCURSOR/>${promptParams.suffix}</USERDOCUMENT>
-
-USERCOMMAND: ${promptParams.command}
-
-Output the inserted content only, do not explain. Please mind the spacing and indentation.
-`.trim(),
-									},
-								],
-							}),
-							signal: abortSignal,
-						});
-
-						if (!response.ok) {
-							const errorData = await response.json().catch(() => ({}));
-							if (response.status === 429) {
-								const retryAfter = errorData.retryAfter || 10;
-								throw new Error(
-									`Rate limit exceeded. Please wait ${retryAfter} seconds before trying again.`,
-								);
-							}
-							throw new Error(errorData.error || "Demo API request failed");
-						}
-
-						const data = await response.json();
-						onTextChange(stripReasoningContent(data.text));
-					} else {
-						if (!activeApiKey) {
-							throw new Error("Add an API key in Settings.");
-						}
-						if (!activeModel) {
-							throw new Error("Select a model in Settings.");
-						}
-						const model = await createProviderModel(
-							provider,
-							activeApiKey,
-							activeModel.apiModelId,
-						);
-						const response = await generateText({
-							model,
-							prompt: `
-You are an AI writing assistant that inserts text at cursor positions while mirroring the user's emotional tone and voice. Only output the inserted content without explanations.
-
-Insert new content at <CURRENTCURSOR/> in the document (USERDOCUMENT) according to the USERCOMMAND.
-Insert content at the cursor position only, do not change other text.
-Ensure the inserted passage matches the emotional tone, voice, and pacing of the surrounding USERDOCUMENT content.
-Avoid repeating text that already appears immediately after <CURRENTCURSOR/>.
-
-<USERDOCUMENT>${promptParams.prefix}<CURRENTCURSOR/>${promptParams.suffix}</USERDOCUMENT>
-
-USERCOMMAND: ${promptParams.command}
-
-Output the inserted content only, do not explain. Please mind the spacing and indentation.
-`.trim(),
-							abortSignal,
-							providerOptions: getDisabledThinkingOptions(provider, activeModel),
-						});
-						onTextChange(stripReasoningContent(response.text));
-					}
-				},
-			})] : []),
+						}),
+					]
+				: []),
 		],
 		[
 			activeApiKey,
@@ -419,29 +422,6 @@ Output the inserted content only, do not explain. Please mind the spacing and in
 				<div className="flex justify-between items-center py-4 px-4 container mx-auto">
 					<div></div>
 					<div className="flex items-center gap-2">
-						{aiFeature.enabled && (
-							<AiButton
-								isPopoverOpen={isPopoverOpen}
-								onPopoverOpenChange={setIsPopoverOpen}
-								isSettingsOpen={isSettingsOpen}
-								onSettingsOpenChange={setIsSettingsOpen}
-								hotkeyDisplay={hotkeyDisplay}
-								isMobile={isMobile}
-								autoTriggerDelay={AUTO_TRIGGER_DELAY}
-								provider={provider}
-								activeEntry={activeEntry}
-								models={models}
-								activeModel={activeModel}
-								demo={demo}
-								autoGeneration={autoGeneration}
-								selectProvider={selectProvider}
-								setModelId={setModelId}
-								setApiKey={setApiKey}
-								setUseDemoApi={setUseDemoApi}
-								setAiMode={setAiMode}
-								setAutoGenerationEnabled={setAutoGenerationEnabled}
-							/>
-						)}
 						<MenuButton
 							spellcheckEnabled={spellcheck.enabled}
 							onSpellcheckToggle={setSpellcheckEnabled}
@@ -449,6 +429,17 @@ Output the inserted content only, do not explain. Please mind the spacing and in
 							onAiFeatureToggle={setAiFeatureEnabled}
 							rewriterEnabled={rewriter.enabled}
 							onRewriterToggle={setRewriterEnabled}
+							provider={provider}
+							activeEntry={activeEntry}
+							models={models}
+							activeModel={activeModel}
+							demo={demo}
+							autoGeneration={autoGeneration}
+							selectProvider={selectProvider}
+							setModelId={setModelId}
+							setApiKey={setApiKey}
+							setAiMode={setAiMode}
+							setAutoGenerationEnabled={setAutoGenerationEnabled}
 						/>
 					</div>
 				</div>
