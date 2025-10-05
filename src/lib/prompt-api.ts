@@ -25,39 +25,31 @@ declare global {
 	const LanguageModel: AILanguageModelFactory | undefined;
 }
 
-export const MINIMUM_CHROME_VERSION_PROMPT = 129;
+import { CHROME_FEATURES } from "./constants";
+
+export const MINIMUM_CHROME_VERSION_PROMPT =
+	CHROME_FEATURES.MINIMUM_PROMPT_VERSION;
 
 export async function checkPromptApiSupport(): Promise<{
 	supported: boolean;
 	available?: "unavailable" | "available" | "downloadable";
 }> {
-	console.log("=== Checking Prompt API Support ===");
-
 	if (typeof window === "undefined") {
-		console.log("Window is undefined (SSR)");
 		return { supported: false };
 	}
 
-	// Check if LanguageModel exists in global scope
-	console.log("typeof LanguageModel:", typeof LanguageModel);
-	console.log("LanguageModel exists:", typeof LanguageModel !== "undefined");
-
 	if (typeof LanguageModel === "undefined") {
-		console.log("❌ Prompt API (LanguageModel) not found");
-		console.log("Make sure you have enabled chrome://flags/#prompt-api-for-gemini-nano");
 		return { supported: false };
 	}
 
 	try {
-		console.log("Calling LanguageModel.availability()...");
 		const availability = await LanguageModel.availability();
-		console.log("✅ Prompt API availability:", availability);
 		return {
 			supported: availability !== "unavailable",
 			available: availability,
 		};
 	} catch (error) {
-		console.error("❌ Error checking Prompt API availability:", error);
+		console.error("Error checking Prompt API availability:", error);
 		return { supported: false };
 	}
 }
@@ -73,7 +65,6 @@ export async function createPromptSession(options?: {
 	}
 
 	if (typeof LanguageModel === "undefined") {
-		console.error("Prompt API (LanguageModel) not available");
 		return null;
 	}
 
@@ -126,7 +117,6 @@ export async function generatePrompt(
 	});
 
 	if (!session) {
-		console.error("Could not create prompt session");
 		return null;
 	}
 

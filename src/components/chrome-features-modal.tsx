@@ -1,4 +1,4 @@
-import { useEffect, useId, useState } from "react";
+import { useId } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -9,7 +9,8 @@ import {
 	DialogTitle,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import { checkRewriterSupport, MINIMUM_CHROME_VERSION } from "@/lib/rewriter";
+import { useRewriterSupport } from "@/hooks/use-rewriter-support";
+import { MINIMUM_CHROME_VERSION } from "@/lib/rewriter";
 
 interface ChromeFeaturesModalProps {
 	isOpen: boolean;
@@ -25,36 +26,8 @@ export function ChromeFeaturesModal({
 	onRewriterToggle,
 }: ChromeFeaturesModalProps) {
 	const rewriterId = useId();
-	const [rewriterSupported, setRewriterSupported] = useState(false);
-	const [isCheckingRewriter, setIsCheckingRewriter] = useState(true);
-	const [isRewriterDownloading, setIsRewriterDownloading] = useState(false);
-
-	useEffect(() => {
-		if (!isOpen) return;
-
-		checkRewriterSupport().then((result) => {
-			setRewriterSupported(result.supported);
-			setIsCheckingRewriter(false);
-
-			if (result.supported && result.available === "downloadable") {
-				setIsRewriterDownloading(true);
-				const toastId = toast.loading(
-					"Rewriter AI model is downloading in the background. This may take a few minutes.",
-				);
-
-				const checkInterval = setInterval(async () => {
-					const checkResult = await checkRewriterSupport();
-					if (checkResult.available === "available") {
-						setIsRewriterDownloading(false);
-						toast.success("Rewriter AI model is ready!", { id: toastId });
-						clearInterval(checkInterval);
-					}
-				}, 5000);
-
-				return () => clearInterval(checkInterval);
-			}
-		});
-	}, [isOpen]);
+	const { rewriterSupported, isCheckingRewriter, isRewriterDownloading } =
+		useRewriterSupport(isOpen);
 
 	const handleRewriterToggle = (checked: boolean) => {
 		if (!rewriterSupported) {
