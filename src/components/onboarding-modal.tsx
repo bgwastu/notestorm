@@ -12,14 +12,14 @@ import { checkPromptApiSupport } from "@/lib/prompt-api";
 
 interface OnboardingModalProps {
 	isOpen: boolean;
-	onComplete: (aiMode: "demo" | "local" | "chrome", openSettings: boolean) => void;
+	onComplete: (aiMode: "demo" | "local" | "chrome") => void;
 }
 
 export function OnboardingModal({ isOpen, onComplete }: OnboardingModalProps) {
 	const os = useOs();
-	const [selectedOption, setSelectedOption] = useState<"demo" | "local" | "chrome">(
-		"demo",
-	);
+	const [selectedOption, setSelectedOption] = useState<
+		"demo" | "local" | "chrome"
+	>("demo");
 	const [chromeAiSupported, setChromeAiSupported] = useState(false);
 
 	const isMobile = useMemo(() => {
@@ -39,8 +39,7 @@ export function OnboardingModal({ isOpen, onComplete }: OnboardingModalProps) {
 	}, [isOpen]);
 
 	const handleComplete = () => {
-		const openSettings = selectedOption === "local";
-		onComplete(selectedOption, openSettings);
+		onComplete(selectedOption);
 	};
 
 	return (
@@ -68,7 +67,9 @@ export function OnboardingModal({ isOpen, onComplete }: OnboardingModalProps) {
 					</div>
 					<div className="flex flex-col gap-2 sm:gap-3">
 						<div className="flex flex-col gap-1.5 sm:gap-2 bg-muted/50 p-3 sm:p-4 rounded-lg">
-							<p className="text-xs sm:text-sm font-medium">How to trigger AI:</p>
+							<p className="text-xs sm:text-sm font-medium">
+								How to trigger AI:
+							</p>
 							{isMobile ? (
 								<p className="text-xs sm:text-sm text-muted-foreground">
 									AI will automatically suggest text as you write. Tap the
@@ -101,7 +102,9 @@ export function OnboardingModal({ isOpen, onComplete }: OnboardingModalProps) {
 						<p className="text-xs sm:text-sm font-medium text-center">
 							Choose how to use AI:
 						</p>
-						<div className={`grid grid-cols-1 gap-2 sm:gap-3 ${chromeAiSupported ? "sm:grid-cols-3" : "sm:grid-cols-2"}`}>
+						<div
+							className={`grid grid-cols-1 gap-2 sm:gap-3 ${chromeAiSupported ? "sm:grid-cols-3" : "sm:grid-cols-2"}`}
+						>
 							<button
 								type="button"
 								onClick={() => setSelectedOption("demo")}

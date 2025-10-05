@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -24,6 +24,7 @@ export function ChromeFeaturesModal({
 	rewriterEnabled,
 	onRewriterToggle,
 }: ChromeFeaturesModalProps) {
+	const rewriterId = useId();
 	const [rewriterSupported, setRewriterSupported] = useState(false);
 	const [isCheckingRewriter, setIsCheckingRewriter] = useState(true);
 	const [isRewriterDownloading, setIsRewriterDownloading] = useState(false);
@@ -76,13 +77,16 @@ export function ChromeFeaturesModal({
 				</DialogHeader>
 				<div className="flex flex-col gap-4">
 					<p className="text-sm text-muted-foreground">
-						The Rewriter feature is powered by Chrome's Built-in AI and only
+						The AI Rewriter feature is powered by Chrome's Built-in AI and only
 						works in Chrome {MINIMUM_CHROME_VERSION}+.
 					</p>
 					<div className="flex flex-col gap-3">
-						<Label className="hover:bg-accent/50 flex items-start gap-3 rounded-lg border p-3 has-[[aria-checked=true]]:border-foreground has-[[aria-checked=true]]:bg-accent">
+						<Label
+							htmlFor={rewriterId}
+							className="hover:bg-accent/50 flex items-start gap-3 rounded-lg border p-3 has-[[aria-checked=true]]:border-foreground has-[[aria-checked=true]]:bg-accent"
+						>
 							<Checkbox
-								id="rewriter-feature"
+								id={rewriterId}
 								checked={rewriterEnabled}
 								onCheckedChange={handleRewriterToggle}
 								disabled={
@@ -94,7 +98,8 @@ export function ChromeFeaturesModal({
 							/>
 							<div className="grid gap-1.5 font-normal">
 								<p className="text-sm leading-none font-medium">
-									Rewriter {isRewriterDownloading && "(Downloading...)"}
+									Enable AI Rewriter Feature{" "}
+									{isRewriterDownloading && "(Downloading...)"}
 								</p>
 								<p className="text-muted-foreground text-sm">
 									Help you rewrite and improve selected text with AI
