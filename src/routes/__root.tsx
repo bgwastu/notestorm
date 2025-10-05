@@ -1,4 +1,4 @@
-import { HeadContent, Scripts, createRootRoute } from "@tanstack/react-router";
+import { createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
 import { Toaster } from "sonner";
 
 import appCss from "../styles.css?url";
@@ -34,7 +34,7 @@ export const Route = createRootRoute({
 			},
 			{
 				property: "og:description",
-				content: "The minimalist writing app with AI that keeps you in flow",
+				content: "The writing app that keeps you in flow",
 			},
 			{
 				property: "og:image",
@@ -58,7 +58,7 @@ export const Route = createRootRoute({
 			},
 			{
 				name: "twitter:description",
-				content: "The minimalist writing app with AI that keeps you in flow",
+				content: "The writing app that keeps you in flow",
 			},
 			{
 				name: "twitter:image",
