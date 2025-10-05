@@ -1,4 +1,5 @@
 import { generateText } from "ai";
+import { useOs } from "@mantine/hooks";
 import {
 	Bot,
 	Clock,
@@ -8,7 +9,7 @@ import {
 	ShieldCheck,
 	Sparkles,
 } from "lucide-react";
-import { useCallback, useEffect, useId, useState } from "react";
+import { useCallback, useEffect, useId, useMemo, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
@@ -42,8 +43,10 @@ import {
 	getDisabledThinkingOptions,
 	getProviderLabel,
 } from "@/lib/provider-models";
-import { MINIMUM_CHROME_VERSION, checkRewriterSupport } from "@/lib/rewriter";
+import { checkRewriterSupport, MINIMUM_CHROME_VERSION } from "@/lib/rewriter";
 import { cn } from "@/lib/utils";
+import { getKeyboardShortcutLabel } from "@/lib/keyboard-shortcuts";
+import { KEYBOARD_SHORTCUTS } from "@/lib/constants";
 
 interface MenuButtonProps {
 	spellcheckEnabled: boolean;
@@ -89,12 +92,14 @@ export function MenuButton({
 	const [isAboutOpen, setIsAboutOpen] = useState(false);
 	const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
 	const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+	const [isHelpOpen, setIsHelpOpen] = useState(false);
 	const [feedback, setFeedback] = useState("");
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [rewriterSupported, setRewriterSupported] = useState(false);
 	const [hasCheckedSupport, setHasCheckedSupport] = useState(false);
 	const [isTestingKey, setIsTestingKey] = useState(false);
 	const [chromeAiSupported, setChromeAiSupported] = useState(false);
+	const os = useOs();
 	const feedbackInputId = useId();
 	const providerId = useId();
 	const modelId = useId();
@@ -151,6 +156,10 @@ export function MenuButton({
 	const activeApiKey = activeEntry.apiKey;
 	const isTestDisabled = isTestingKey || !activeApiKey || !activeModel;
 	const aiMode = demo?.aiMode ?? "demo";
+
+	const aiCompletionShortcut = useMemo(() => {
+		return getKeyboardShortcutLabel(KEYBOARD_SHORTCUTS.AI_COMPLETION, os);
+	}, [os]);
 
 	const handleTestApiKey = useCallback(async () => {
 		if (!activeApiKey) {
@@ -231,6 +240,9 @@ export function MenuButton({
 					</DropdownMenuItem>
 					<DropdownMenuItem onClick={() => setIsFeedbackOpen(true)}>
 						Feedback
+					</DropdownMenuItem>
+					<DropdownMenuItem onClick={() => setIsHelpOpen(true)}>
+						Help
 					</DropdownMenuItem>
 					<DropdownMenuItem
 						onClick={() => {
@@ -316,6 +328,48 @@ export function MenuButton({
 						>
 							{isSubmitting ? "Sending..." : "Submit Feedback"}
 						</Button>
+					</div>
+				</DialogContent>
+			</Dialog>
+
+			<Dialog open={isHelpOpen} onOpenChange={setIsHelpOpen}>
+				<DialogContent>
+					<DialogHeader>
+						<DialogTitle>Help</DialogTitle>
+						<DialogDescription>
+							Learn how to use Notestorm's AI features
+						</DialogDescription>
+					</DialogHeader>
+					<div className="flex flex-col gap-4">
+						<div className="flex flex-col gap-2">
+							<div className="flex items-center gap-2">
+								<Sparkles className="w-4 h-4 text-muted-foreground" />
+								<h3 className="font-medium text-sm">AI Copilot</h3>
+							</div>
+							<p className="text-sm text-muted-foreground">
+								Press{" "}
+								<kbd className="px-1.5 py-0.5 bg-muted rounded text-xs">
+									{aiCompletionShortcut.modifier}
+								</kbd>
+								+
+								<kbd className="px-1.5 py-0.5 bg-muted rounded text-xs">
+									{aiCompletionShortcut.key}
+								</kbd>{" "}
+								to get AI suggestions or enable auto-generation in Settings
+							</p>
+						</div>
+
+						<div className="flex flex-col gap-2">
+							<div className="flex items-center gap-2">
+								<Bot className="w-4 h-4 text-muted-foreground" />
+								<h3 className="font-medium text-sm">AI Rewriter</h3>
+							</div>
+							<p className="text-sm text-muted-foreground">
+								Select text and click the rewrite button to improve it
+								{!rewriterSupported &&
+									` (requires Chrome ${MINIMUM_CHROME_VERSION}+)`}
+							</p>
+						</div>
 					</div>
 				</DialogContent>
 			</Dialog>

@@ -1,5 +1,7 @@
 import { useOs } from "@mantine/hooks";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { getKeyboardShortcutLabel } from "@/lib/keyboard-shortcuts";
+import { KEYBOARD_SHORTCUTS } from "@/lib/constants";
 
 interface TextSelectionMenuProps {
 	onRewrite: () => void;
@@ -11,7 +13,8 @@ export function TextSelectionMenu({ onRewrite }: TextSelectionMenuProps) {
 	const menuRef = useRef<HTMLDivElement>(null);
 
 	const shortcutKey = useMemo(() => {
-		return os === "macos" || os === "ios" ? "⌘K" : "Ctrl+K";
+		const shortcut = getKeyboardShortcutLabel(KEYBOARD_SHORTCUTS.AI_REWRITER, os);
+		return `${shortcut.modifier}+${shortcut.key}`;
 	}, [os]);
 
 	useEffect(() => {

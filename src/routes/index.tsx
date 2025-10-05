@@ -29,7 +29,11 @@ import { TextSelectionMenu } from "@/components/text-selection-menu";
 import { useEditorPersistence } from "@/hooks/use-editor-persistence";
 import { useSettingsPersistence } from "@/hooks/use-settings-persistence";
 import { aiCompletion, stripReasoningContent } from "@/lib/completion";
-import { AI_CONFIG, STORAGE_KEYS } from "@/lib/constants";
+import {
+	AI_CONFIG,
+	KEYBOARD_SHORTCUTS,
+	STORAGE_KEYS,
+} from "@/lib/constants";
 import { generatePrompt } from "@/lib/prompt-api";
 import {
 	createProviderModel,
@@ -219,7 +223,7 @@ function Home() {
 						Prec.highest(
 							keymap.of([
 								{
-									key: "Mod-k",
+									key: KEYBOARD_SHORTCUTS.AI_REWRITER,
 									preventDefault: true,
 									run: (view: EditorView) => {
 										const { from, to } = view.state.selection.main;
@@ -246,7 +250,7 @@ function Home() {
 	const filteredVscodeKeymap = useMemo(() => {
 		return vscodeKeymap.filter((binding) => {
 			const key = binding.key || "";
-			return !key.startsWith("Mod-k");
+			return !key.startsWith(KEYBOARD_SHORTCUTS.AI_REWRITER);
 		});
 	}, []);
 

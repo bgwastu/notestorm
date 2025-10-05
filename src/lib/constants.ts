@@ -3,8 +3,13 @@ export const STORAGE_KEYS = {
 	SETTINGS: "ai-settings",
 } as const;
 
+export const KEYBOARD_SHORTCUTS = {
+	AI_COMPLETION: "Mod-i",
+	AI_REWRITER: "Mod-k",
+} as const;
+
 export const AI_CONFIG = {
-	COMPLETION_HOTKEY: "Mod-i",
+	COMPLETION_HOTKEY: KEYBOARD_SHORTCUTS.AI_COMPLETION,
 	AUTO_TRIGGER_DELAY: 500,
 } as const;
 
