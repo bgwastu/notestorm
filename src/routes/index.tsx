@@ -28,21 +28,37 @@ import { RewriterDialog } from "@/components/rewriter-dialog";
 import { TextSelectionMenu } from "@/components/text-selection-menu";
 import { useEditorPersistence } from "@/hooks/use-editor-persistence";
 import { useSettingsPersistence } from "@/hooks/use-settings-persistence";
-import { aiCompletion } from "@/lib/completion";
+import { aiCompletion, stripReasoningContent } from "@/lib/completion";
 import { generatePrompt } from "@/lib/prompt-api";
 import {
 	createProviderModel,
 	getDisabledThinkingOptions,
 	isInteractiveElement,
 } from "@/lib/provider-models";
+import { AI_CONFIG, STORAGE_KEYS } from "@/lib/constants";
 import { checkRewriterSupport } from "@/lib/rewriter";
-import { stripReasoningContent } from "@/lib/utils";
 
-const STORAGE_KEY = "editor-state";
-const SETTINGS_STORAGE_KEY = "ai-settings";
-const AI_COMPLETION_HOTKEY = "Mod-i";
-const AUTO_TRIGGER_DELAY = 500;
 const stateFields = { history: historyField };
+
+const AI_SYSTEM_PROMPT =
+	"You are an AI writing assistant that inserts text at cursor positions while mirroring the user's emotional tone and voice. Only output the inserted content without explanations.";
+
+const AI_USER_PROMPT_TEMPLATE = `Insert new content at <CURRENTCURSOR/> in the document (USERDOCUMENT) according to the USERCOMMAND.
+Insert content at the cursor position only, do not change other text.
+Ensure the inserted passage matches the emotional tone, voice, and pacing of the surrounding USERDOCUMENT content.
+Avoid repeating text that already appears immediately after <CURRENTCURSOR/>.
+
+<USERDOCUMENT>{prefix}<CURRENTCURSOR/>{suffix}</USERDOCUMENT>
+
+USERCOMMAND: {command}
+
+Output the inserted content only, do not explain. Please mind the spacing and indentation.`;
+
+function buildAiPrompt(prefix: string, suffix: string, command: string) {
+	return AI_USER_PROMPT_TEMPLATE.replace("{prefix}", prefix)
+		.replace("{suffix}", suffix)
+		.replace("{command}", command);
+}
 
 const theme = createTheme({
 	theme: "light",
@@ -86,8 +102,8 @@ function Home() {
 	}, [os]);
 
 	const { value, setValue, initialState, isReady, persistState } =
-		useEditorPersistence(STORAGE_KEY, stateFields);
-	const settingsHook = useSettingsPersistence(SETTINGS_STORAGE_KEY, isMobile);
+		useEditorPersistence(STORAGE_KEYS.EDITOR, stateFields);
+	const settingsHook = useSettingsPersistence(STORAGE_KEYS.SETTINGS, isMobile);
 	const {
 		provider,
 		activeEntry,
@@ -261,9 +277,9 @@ function Home() {
 			...(aiFeature.enabled
 				? [
 						aiCompletion({
-							hotkey: AI_COMPLETION_HOTKEY,
+							hotkey: AI_CONFIG.COMPLETION_HOTKEY,
 							autoTriggerDelay: autoGeneration.enabled
-								? AUTO_TRIGGER_DELAY
+								? AI_CONFIG.AUTO_TRIGGER_DELAY
 								: undefined,
 							suppressAutoErrors: autoGeneration.enabled,
 							command:
@@ -274,20 +290,14 @@ function Home() {
 								...promptParams
 							}) => {
 								if (aiMode === "chrome") {
-									const promptText = `Insert new content at <CURRENTCURSOR/> in the document (USERDOCUMENT) according to the USERCOMMAND.
-Insert content at the cursor position only, do not change other text.
-Ensure the inserted passage matches the emotional tone, voice, and pacing of the surrounding USERDOCUMENT content.
-Avoid repeating text that already appears immediately after <CURRENTCURSOR/>.
-
-<USERDOCUMENT>${promptParams.prefix}<CURRENTCURSOR/>${promptParams.suffix}</USERDOCUMENT>
-
-USERCOMMAND: ${promptParams.command}
-
-Output the inserted content only, do not explain. Please mind the spacing and indentation.`;
+									const promptText = buildAiPrompt(
+										promptParams.prefix,
+										promptParams.suffix,
+										promptParams.command,
+									);
 
 									const result = await generatePrompt(promptText, {
-										systemPrompt:
-											"You are an AI writing assistant that inserts text at cursor positions while mirroring the user's emotional tone and voice. Only output the inserted content without explanations.",
+										systemPrompt: AI_SYSTEM_PROMPT,
 										temperature: 0.8,
 										topK: 8,
 										signal: abortSignal,
@@ -299,6 +309,12 @@ Output the inserted content only, do not explain. Please mind the spacing and in
 
 									onTextChange(stripReasoningContent(result));
 								} else if (useDemoApi) {
+									const fullPrompt = `${AI_SYSTEM_PROMPT}\n\n${buildAiPrompt(
+										promptParams.prefix,
+										promptParams.suffix,
+										promptParams.command,
+									)}`;
+
 									const response = await fetch("/api/chat", {
 										method: "POST",
 										headers: {
@@ -308,20 +324,7 @@ Output the inserted content only, do not explain. Please mind the spacing and in
 											messages: [
 												{
 													role: "user",
-													content: `
-You are an AI writing assistant that inserts text at cursor positions while mirroring the user's emotional tone and voice. Only output the inserted content without explanations.
-
-Insert new content at <CURRENTCURSOR/> in the document (USERDOCUMENT) according to the USERCOMMAND.
-Insert content at the cursor position only, do not change other text.
-Ensure the inserted passage matches the emotional tone, voice, and pacing of the surrounding USERDOCUMENT content.
-Avoid repeating text that already appears immediately after <CURRENTCURSOR/>.
-
-<USERDOCUMENT>${promptParams.prefix}<CURRENTCURSOR/>${promptParams.suffix}</USERDOCUMENT>
-
-USERCOMMAND: ${promptParams.command}
-
-Output the inserted content only, do not explain. Please mind the spacing and indentation.
-`.trim(),
+													content: fullPrompt.trim(),
 												},
 											],
 										}),
@@ -355,22 +358,15 @@ Output the inserted content only, do not explain. Please mind the spacing and in
 										activeApiKey,
 										activeModel.apiModelId,
 									);
+									const fullPrompt = `${AI_SYSTEM_PROMPT}\n\n${buildAiPrompt(
+										promptParams.prefix,
+										promptParams.suffix,
+										promptParams.command,
+									)}`;
+
 									const response = await generateText({
 										model,
-										prompt: `
-You are an AI writing assistant that inserts text at cursor positions while mirroring the user's emotional tone and voice. Only output the inserted content without explanations.
-
-Insert new content at <CURRENTCURSOR/> in the document (USERDOCUMENT) according to the USERCOMMAND.
-Insert content at the cursor position only, do not change other text.
-Ensure the inserted passage matches the emotional tone, voice, and pacing of the surrounding USERDOCUMENT content.
-Avoid repeating text that already appears immediately after <CURRENTCURSOR/>.
-
-<USERDOCUMENT>${promptParams.prefix}<CURRENTCURSOR/>${promptParams.suffix}</USERDOCUMENT>
-
-USERCOMMAND: ${promptParams.command}
-
-Output the inserted content only, do not explain. Please mind the spacing and indentation.
-`.trim(),
+										prompt: fullPrompt.trim(),
 										abortSignal,
 										providerOptions: getDisabledThinkingOptions(
 											provider,

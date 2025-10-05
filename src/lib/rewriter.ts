@@ -32,7 +32,9 @@ declare global {
 	const Rewriter: AIRewriterFactory | undefined;
 }
 
-export const MINIMUM_CHROME_VERSION = 137;
+import { CHROME_FEATURES } from "./constants";
+
+export const MINIMUM_CHROME_VERSION = CHROME_FEATURES.MINIMUM_REWRITER_VERSION;
 
 export async function checkRewriterSupport(): Promise<{
 	supported: boolean;
@@ -60,7 +62,6 @@ export async function createRewriter(options?: {
 	length?: "as-is" | "shorter" | "longer";
 }): Promise<AIRewriter | null> {
 	if (!("Rewriter" in self)) {
-		console.error("Rewriter not available in self");
 		return null;
 	}
 
@@ -94,7 +95,6 @@ export async function rewriteText(
 	});
 
 	if (!rewriter) {
-		console.error("Could not create rewriter instance");
 		return null;
 	}
 

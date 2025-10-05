@@ -42,7 +42,7 @@ import {
 	getDisabledThinkingOptions,
 	getProviderLabel,
 } from "@/lib/provider-models";
-import { checkRewriterSupport, MINIMUM_CHROME_VERSION } from "@/lib/rewriter";
+import { MINIMUM_CHROME_VERSION, checkRewriterSupport } from "@/lib/rewriter";
 import { cn } from "@/lib/utils";
 
 interface MenuButtonProps {
@@ -202,7 +202,7 @@ export function MenuButton({
 			setFeedback("");
 			setIsFeedbackOpen(false);
 		} catch (error) {
-			console.error(error);
+			console.error("Failed to send feedback:", error);
 			toast.error("Failed to send feedback. Please try again.");
 		} finally {
 			setIsSubmitting(false);

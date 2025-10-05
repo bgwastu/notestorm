@@ -168,24 +168,8 @@ function mergeModels(primaryModels, openRouterModels) {
   return merged;
 }
 
-function generateSource(models) {
-  const providerUnion = PROVIDER_ORDER.map((provider) => `  | "${provider}"`).join("\n");
-
-  const modelEntries = models
-    .map(
-      (model) =>
-        `  {
-    id: "${model.id}",
-    provider: "${model.provider}",
-    name: "${model.name.replace(/"/g, '\\"')}",
-    apiModelId: "${model.apiModelId}",
-    hasReasoning: ${model.hasReasoning},
-    canDisableThinking: ${model.canDisableThinking},
-  },`,
-    )
-    .join("\n");
-
-  return `export type SettingsProvider =\n${providerUnion};\n\nexport type ProviderModel = {\n  id: string;\n  provider: SettingsProvider;\n  name: string;\n  apiModelId: string;\n  hasReasoning: boolean;\n  canDisableThinking: boolean;\n};\n\nconst MODELS: ProviderModel[] = [\n${modelEntries}\n];\n\nexport function listModels() {\n  return MODELS;\n}\n\nexport function listModelsByProvider(provider: SettingsProvider) {\n  return MODELS.filter((model) => model.provider === provider);\n}\n\nexport function findModelById(id: string) {\n  return MODELS.find((model) => model.id === id);\n}\n\nexport function modelSupportsReasoning(model: ProviderModel): boolean {\n  return model.hasReasoning;\n}\n`;
+function generateJson(models) {
+  return JSON.stringify(models, null, 2);
 }
 
 async function main() {
@@ -195,9 +179,9 @@ async function main() {
   const openRouterModels = normalizeOpenRouterModels(openRouterRaw);
   const mergedModels = mergeModels(chatwiseModels, openRouterModels);
 
-  const source = generateSource(mergedModels);
-  const filePath = join(dirname(fileURLToPath(import.meta.url)), "..", "src", "lib", "list-model.ts");
-  await writeFile(filePath, `${source}\n`);
+  const json = generateJson(mergedModels);
+  const filePath = join(dirname(fileURLToPath(import.meta.url)), "..", "src", "lib", "models.json");
+  await writeFile(filePath, `${json}\n`);
   console.log(`Updated ${filePath} with ${mergedModels.length} models.`);
 }
 
