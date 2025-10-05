@@ -63,6 +63,7 @@ interface MenuButtonProps {
 	setApiKey: (apiKey: string) => void;
 	setAiMode: (mode: "demo" | "local" | "chrome") => void;
 	setAutoGenerationEnabled: (enabled: boolean) => void;
+	onResetNotes: () => void;
 }
 
 export function MenuButton({
@@ -83,6 +84,7 @@ export function MenuButton({
 	setApiKey,
 	setAiMode,
 	setAutoGenerationEnabled,
+	onResetNotes,
 }: MenuButtonProps) {
 	const [isAboutOpen, setIsAboutOpen] = useState(false);
 	const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
@@ -229,6 +231,21 @@ export function MenuButton({
 					</DropdownMenuItem>
 					<DropdownMenuItem onClick={() => setIsFeedbackOpen(true)}>
 						Feedback
+					</DropdownMenuItem>
+					<DropdownMenuItem
+						onClick={() => {
+							if (
+								confirm(
+									"Are you sure you want to reset all notes? This cannot be undone.",
+								)
+							) {
+								onResetNotes();
+								toast.success("Notes have been reset.");
+							}
+						}}
+						className="text-destructive focus:text-destructive"
+					>
+						Reset Notes
 					</DropdownMenuItem>
 				</DropdownMenuContent>
 			</DropdownMenu>

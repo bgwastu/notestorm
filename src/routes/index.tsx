@@ -29,13 +29,13 @@ import { TextSelectionMenu } from "@/components/text-selection-menu";
 import { useEditorPersistence } from "@/hooks/use-editor-persistence";
 import { useSettingsPersistence } from "@/hooks/use-settings-persistence";
 import { aiCompletion, stripReasoningContent } from "@/lib/completion";
+import { AI_CONFIG, STORAGE_KEYS } from "@/lib/constants";
 import { generatePrompt } from "@/lib/prompt-api";
 import {
 	createProviderModel,
 	getDisabledThinkingOptions,
 	isInteractiveElement,
 } from "@/lib/provider-models";
-import { AI_CONFIG, STORAGE_KEYS } from "@/lib/constants";
 import { checkRewriterSupport } from "@/lib/rewriter";
 
 const stateFields = { history: historyField };
@@ -153,6 +153,16 @@ function Home() {
 	const handleEditorCreate = useCallback((view: EditorView) => {
 		editorRef.current = view;
 	}, []);
+
+	const handleResetNotes = useCallback(() => {
+		const view = editorRef.current;
+		if (view) {
+			const len = view.state.doc.length;
+			view.dispatch({ changes: { from: 0, to: len, insert: "" } });
+		} else {
+			setValue("");
+		}
+	}, [setValue]);
 
 	const handleOnboardingComplete = useCallback(
 		(aiMode: "demo" | "local" | "chrome") => {
@@ -436,6 +446,7 @@ function Home() {
 							setApiKey={setApiKey}
 							setAiMode={setAiMode}
 							setAutoGenerationEnabled={setAutoGenerationEnabled}
+							onResetNotes={handleResetNotes}
 						/>
 					</div>
 				</div>
