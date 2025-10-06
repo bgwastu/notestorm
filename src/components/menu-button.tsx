@@ -1,5 +1,5 @@
-import { generateText } from "ai";
 import { useOs } from "@mantine/hooks";
+import { generateText } from "ai";
 import {
 	Bot,
 	Clock,
@@ -36,6 +36,8 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
+import { KEYBOARD_SHORTCUTS } from "@/lib/constants";
+import { getKeyboardShortcutLabel } from "@/lib/keyboard-shortcuts";
 import type { ProviderModel, SettingsProvider } from "@/lib/list-model";
 import { checkPromptApiSupport } from "@/lib/prompt-api";
 import {
@@ -45,8 +47,6 @@ import {
 } from "@/lib/provider-models";
 import { checkRewriterSupport, MINIMUM_CHROME_VERSION } from "@/lib/rewriter";
 import { cn } from "@/lib/utils";
-import { getKeyboardShortcutLabel } from "@/lib/keyboard-shortcuts";
-import { KEYBOARD_SHORTCUTS } from "@/lib/constants";
 
 interface MenuButtonProps {
 	spellcheckEnabled: boolean;
@@ -67,6 +67,8 @@ interface MenuButtonProps {
 	setAiMode: (mode: "demo" | "local" | "chrome") => void;
 	setAutoGenerationEnabled: (enabled: boolean) => void;
 	onResetNotes: () => void;
+	openSettings?: boolean;
+	onSettingsOpened?: () => void;
 }
 
 export function MenuButton({
@@ -88,6 +90,8 @@ export function MenuButton({
 	setAiMode,
 	setAutoGenerationEnabled,
 	onResetNotes,
+	openSettings = false,
+	onSettingsOpened,
 }: MenuButtonProps) {
 	const [isAboutOpen, setIsAboutOpen] = useState(false);
 	const [isFeedbackOpen, setIsFeedbackOpen] = useState(false);
@@ -139,6 +143,13 @@ export function MenuButton({
 			setChromeAiSupported(result.supported);
 		});
 	}, []);
+
+	useEffect(() => {
+		if (openSettings) {
+			setIsSettingsOpen(true);
+			onSettingsOpened?.();
+		}
+	}, [openSettings, onSettingsOpened]);
 
 	const handleRewriterToggle = (checked: boolean) => {
 		if (!rewriterSupported) {

@@ -168,13 +168,24 @@ function Home() {
 		}
 	}, [setValue]);
 
+	const [openSettings, setOpenSettings] = useState(false);
+
 	const handleOnboardingComplete = useCallback(
 		(aiMode: "demo" | "local" | "chrome") => {
 			setAiMode(aiMode);
 			setHasSeenOnboarding(true);
+
+			// Auto-open settings modal for BYOK setup
+			if (aiMode === "local") {
+				setOpenSettings(true);
+			}
 		},
 		[setAiMode, setHasSeenOnboarding],
 	);
+
+	const handleSettingsOpened = useCallback(() => {
+		setOpenSettings(false);
+	}, []);
 
 	const handleRewriteClick = useCallback(() => {
 		if (!editorRef.current) {
@@ -293,7 +304,7 @@ function Home() {
 						aiCompletion({
 							hotkey: AI_CONFIG.COMPLETION_HOTKEY,
 							autoTriggerDelay: autoGeneration.enabled
-								? AI_CONFIG.AUTO_TRIGGER_DELAY
+								? (isMobile ? 300 : AI_CONFIG.AUTO_TRIGGER_DELAY)
 								: undefined,
 							suppressAutoErrors: autoGeneration.enabled,
 							command:
@@ -405,6 +416,7 @@ function Home() {
 			aiFeature.enabled,
 			rewriterKeymap,
 			filteredVscodeKeymap,
+			isMobile,
 		],
 	);
 
@@ -451,6 +463,8 @@ function Home() {
 							setAiMode={setAiMode}
 							setAutoGenerationEnabled={setAutoGenerationEnabled}
 							onResetNotes={handleResetNotes}
+							openSettings={openSettings}
+							onSettingsOpened={handleSettingsOpened}
 						/>
 					</div>
 				</div>
