@@ -327,6 +327,12 @@ const autoTriggerPlugin = ViewPlugin.fromClass(
 				return;
 			}
 
+			// Determine if this is a mobile device (this is a simple heuristic)
+			// We'll check for common mobile indicators in the user agent
+			const isMobileDevice = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+				navigator.userAgent
+			);
+
 			// Monitor for typing activity
 			const handleInput = () => {
 				this.clearAutoTriggerTimer();
@@ -340,22 +346,43 @@ const autoTriggerPlugin = ViewPlugin.fromClass(
 				// Look at character after the cursor
 				const charAfterCursor = to < text.length ? text[to] : "";
 
-				// Only auto-trigger at end of sentences or after spaces (word boundaries)
-				// But NOT in the middle of a word (when next char is a letter)
-				const isAtWordBoundary =
-					// End of sentence
-					((charBeforeCursor === "." ||
-						charBeforeCursor === "!" ||
-						charBeforeCursor === "?") &&
-						(charAfterCursor === "" ||
-							charAfterCursor === " " ||
-							charAfterCursor === "\n")) ||
-					// After a space, but not if we're in the middle of a word
-					(charBeforeCursor === " " &&
-						(charAfterCursor === "" ||
-							charAfterCursor === " " ||
-							charAfterCursor === "\n" ||
-							/[.!?,;:\-—]/.test(charAfterCursor)));
+				// Auto-trigger logic - more sensitive for mobile devices
+				let isAtWordBoundary = false;
+
+				if (isMobileDevice) {
+					// More aggressive triggering for mobile devices
+					isAtWordBoundary =
+						// End of sentence
+						((charBeforeCursor === "." ||
+							charBeforeCursor === "!" ||
+							charBeforeCursor === "?") &&
+							(charAfterCursor === "" ||
+								charAfterCursor === " " ||
+								charAfterCursor === "\n")) ||
+						// After a space or common mobile typing patterns
+						charBeforeCursor === " " ||
+						// After punctuation that mobile users commonly pause after
+						(/[.!?,;:\-—]/.test(charBeforeCursor) &&
+							(charAfterCursor === "" ||
+								charAfterCursor === " " ||
+								charAfterCursor === "\n"));
+				} else {
+					// Desktop logic - more restrictive
+					isAtWordBoundary =
+						// End of sentence
+						((charBeforeCursor === "." ||
+							charBeforeCursor === "!" ||
+							charBeforeCursor === "?") &&
+							(charAfterCursor === "" ||
+								charAfterCursor === " " ||
+								charAfterCursor === "\n")) ||
+						// After a space, but not if we're in the middle of a word
+						(charBeforeCursor === " " &&
+							(charAfterCursor === "" ||
+								charAfterCursor === " " ||
+								charAfterCursor === "\n" ||
+								/[.!?,;:\-—]/.test(charAfterCursor)));
+				}
 
 				if (isAtWordBoundary) {
 					this.autoTriggerTimer = window.setTimeout(() => {
@@ -367,9 +394,17 @@ const autoTriggerPlugin = ViewPlugin.fromClass(
 			// Listen for input events
 			view.dom.addEventListener("input", handleInput);
 
+			// Also listen for key events on mobile devices for better reliability
+			if (isMobileDevice) {
+				view.dom.addEventListener("keyup", handleInput);
+			}
+
 			// Store cleanup function
 			this.cleanupListener = () => {
 				view.dom.removeEventListener("input", handleInput);
+				if (isMobileDevice) {
+					view.dom.removeEventListener("keyup", handleInput);
+				}
 			};
 		}
 
