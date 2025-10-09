@@ -67,6 +67,7 @@ interface MenuButtonProps {
 	setAiMode: (mode: "demo" | "local" | "chrome") => void;
 	setAutoGenerationEnabled: (enabled: boolean) => void;
 	onResetNotes: () => void;
+	onCopyAll: () => void;
 	openSettings?: boolean;
 	onSettingsOpened?: () => void;
 }
@@ -90,6 +91,7 @@ export function MenuButton({
 	setAiMode,
 	setAutoGenerationEnabled,
 	onResetNotes,
+	onCopyAll,
 	openSettings = false,
 	onSettingsOpened,
 }: MenuButtonProps) {
@@ -245,6 +247,9 @@ export function MenuButton({
 				<DropdownMenuContent align="end">
 					<DropdownMenuItem onClick={() => setIsSettingsOpen(true)}>
 						Settings
+					</DropdownMenuItem>
+					<DropdownMenuItem onClick={onCopyAll}>
+						Copy All
 					</DropdownMenuItem>
 					<DropdownMenuItem onClick={() => setIsAboutOpen(true)}>
 						About
