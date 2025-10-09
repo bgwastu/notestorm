@@ -21,6 +21,7 @@ import { createTheme } from "@uiw/codemirror-themes";
 import CodeMirror, { EditorView, keymap } from "@uiw/react-codemirror";
 import { generateText } from "ai";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { toast } from "sonner";
 import { ChromeFeaturesModal } from "@/components/chrome-features-modal";
 import { MenuButton } from "@/components/menu-button";
 import { OnboardingModal } from "@/components/onboarding-modal";
@@ -167,6 +168,16 @@ function Home() {
 			setValue("");
 		}
 	}, [setValue]);
+
+	const handleCopyAll = useCallback(async () => {
+		try {
+			await navigator.clipboard.writeText(value);
+			toast.success("All content copied to clipboard");
+		} catch (error) {
+			console.error("Failed to copy content:", error);
+			toast.error("Failed to copy content to clipboard");
+		}
+	}, [value]);
 
 	const [openSettings, setOpenSettings] = useState(false);
 
@@ -463,6 +474,7 @@ function Home() {
 							setAiMode={setAiMode}
 							setAutoGenerationEnabled={setAutoGenerationEnabled}
 							onResetNotes={handleResetNotes}
+							onCopyAll={handleCopyAll}
 							openSettings={openSettings}
 							onSettingsOpened={handleSettingsOpened}
 						/>
