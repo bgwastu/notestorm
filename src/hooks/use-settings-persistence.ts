@@ -45,6 +45,10 @@ type ChromeFeaturesSettings = {
   hasSeenChromeFeatures: boolean;
 };
 
+type TextSizeSettings = {
+  fontSize: number; // in pixels
+};
+
 const PROVIDERS: SettingsProvider[] = [
   "groq",
   "google",
@@ -53,6 +57,7 @@ const PROVIDERS: SettingsProvider[] = [
   "openrouter",
 ];
 const DEFAULT_PROVIDER: SettingsProvider = "groq";
+const DEFAULT_FONT_SIZE = 18; // text-lg equivalent
 
 export type SettingsState = {
   provider: SettingsProvider;
@@ -64,6 +69,7 @@ export type SettingsState = {
   rewriter: RewriterSettings;
   onboarding: OnboardingSettings;
   chromeFeatures: ChromeFeaturesSettings;
+  textSize: TextSizeSettings;
 };
 
 type StoredSettings = Partial<{
@@ -79,6 +85,7 @@ type StoredSettings = Partial<{
   rewriter: Partial<RewriterSettings>;
   onboarding: Partial<OnboardingSettings>;
   chromeFeatures: Partial<ChromeFeaturesSettings>;
+  textSize: Partial<TextSizeSettings>;
 }>;
 
 function listProviderModels(provider: SettingsProvider) {
@@ -131,6 +138,7 @@ function createDefaultState(isMobile?: boolean): SettingsState {
     rewriter: { enabled: false },
     onboarding: { hasSeenOnboarding: false },
     chromeFeatures: { hasSeenChromeFeatures: false },
+    textSize: { fontSize: DEFAULT_FONT_SIZE },
   };
 }
 
@@ -194,7 +202,11 @@ function normalizeSettings(raw: StoredSettings | undefined, isMobile?: boolean):
     hasSeenChromeFeatures: raw.chromeFeatures?.hasSeenChromeFeatures ?? false,
   };
 
-  return { provider, entries, demo, autoGeneration, spellcheck, aiFeature, rewriter, onboarding, chromeFeatures };
+  const textSize: TextSizeSettings = {
+    fontSize: raw.textSize?.fontSize ?? DEFAULT_FONT_SIZE,
+  };
+
+  return { provider, entries, demo, autoGeneration, spellcheck, aiFeature, rewriter, onboarding, chromeFeatures, textSize };
 }
 
 export function useSettingsPersistence(storageKey: string, isMobile?: boolean) {
@@ -379,6 +391,16 @@ export function useSettingsPersistence(storageKey: string, isMobile?: boolean) {
     [commit]
   );
 
+  const setTextSize = useCallback(
+    (fontSize: number) => {
+      commit((previous) => ({
+        ...previous,
+        textSize: { fontSize },
+      }));
+    },
+    [commit]
+  );
+
   const provider = settings.provider;
   const entries = settings.entries;
   const activeEntry = entries[provider];
@@ -389,6 +411,7 @@ export function useSettingsPersistence(storageKey: string, isMobile?: boolean) {
   const rewriter = settings.rewriter;
   const onboarding = settings.onboarding;
   const chromeFeatures = settings.chromeFeatures;
+  const textSize = settings.textSize;
 
   const models = useMemo(() => listProviderModels(provider), [provider]);
 
@@ -410,6 +433,7 @@ export function useSettingsPersistence(storageKey: string, isMobile?: boolean) {
     rewriter,
     onboarding,
     chromeFeatures,
+    textSize,
     isReady,
     selectProvider,
     setModelId,
@@ -422,6 +446,7 @@ export function useSettingsPersistence(storageKey: string, isMobile?: boolean) {
     setRewriterEnabled,
     setHasSeenOnboarding,
     setHasSeenChromeFeatures,
+    setTextSize,
     resetSettings,
   };
 }

@@ -34,9 +34,16 @@ export function TextSelectionMenu({ onRewrite }: TextSelectionMenuProps) {
 			const range = selection.getRangeAt(0);
 			const rect = range.getBoundingClientRect();
 
+			// For fixed positioning, we use viewport coordinates directly
+			// Account for viewport offset if the page is scrolled within a zoomed view
+			const viewportOffset = window.visualViewport ? {
+				offsetLeft: window.visualViewport.offsetLeft,
+				offsetTop: window.visualViewport.offsetTop,
+			} : { offsetLeft: 0, offsetTop: 0 };
+
 			setPosition({
-				top: rect.top + window.scrollY - 40,
-				left: rect.left + window.scrollX,
+				top: rect.top + viewportOffset.offsetTop - 40,
+				left: rect.left + viewportOffset.offsetLeft,
 			});
 		};
 
