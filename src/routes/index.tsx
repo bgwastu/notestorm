@@ -20,8 +20,10 @@ import { createFileRoute } from "@tanstack/react-router";
 import { createTheme } from "@uiw/codemirror-themes";
 import CodeMirror, { EditorView, keymap } from "@uiw/react-codemirror";
 import { generateText } from "ai";
+import { Share } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 import { ChromeFeaturesModal } from "@/components/chrome-features-modal";
 import { MenuButton } from "@/components/menu-button";
 import { OnboardingModal } from "@/components/onboarding-modal";
@@ -121,6 +123,7 @@ function Home() {
 		rewriter,
 		onboarding,
 		chromeFeatures,
+		textSize,
 		isReady: isSettingsReady,
 		selectProvider,
 		setModelId,
@@ -132,6 +135,7 @@ function Home() {
 		setRewriterEnabled,
 		setHasSeenOnboarding,
 		setHasSeenChromeFeatures,
+		setTextSize,
 	} = settingsHook;
 	const activeApiKey = activeEntry.apiKey;
 	const useDemoApi = demo.useDemoApi;
@@ -176,6 +180,26 @@ function Home() {
 		} catch (error) {
 			console.error("Failed to copy content:", error);
 			toast.error("Failed to copy content to clipboard");
+		}
+	}, [value]);
+
+	const handleShare = useCallback(async () => {
+		if (!navigator.share) {
+			toast.error("Share feature is not supported in this browser");
+			return;
+		}
+
+		try {
+			await navigator.share({
+				title: "My Notes",
+				text: value,
+			});
+		} catch (error) {
+			// User cancelled the share or it failed
+			if ((error as Error).name !== "AbortError") {
+				console.error("Failed to share content:", error);
+				toast.error("Failed to share content");
+			}
 		}
 	}, [value]);
 
@@ -455,6 +479,16 @@ function Home() {
 				<div className="flex justify-between items-center py-4 px-4 container mx-auto">
 					<div></div>
 					<div className="flex items-center gap-2">
+						{navigator.share && (
+							<Button
+								variant="ghost"
+								size="icon"
+								onClick={handleShare}
+								title="Share notes"
+							>
+								<Share className="h-5 w-5" />
+							</Button>
+						)}
 						<MenuButton
 							spellcheckEnabled={spellcheck.enabled}
 							onSpellcheckToggle={setSpellcheckEnabled}
@@ -468,11 +502,13 @@ function Home() {
 							activeModel={activeModel}
 							demo={demo}
 							autoGeneration={autoGeneration}
+							textSize={textSize}
 							selectProvider={selectProvider}
 							setModelId={setModelId}
 							setApiKey={setApiKey}
 							setAiMode={setAiMode}
 							setAutoGenerationEnabled={setAutoGenerationEnabled}
+							setTextSize={setTextSize}
 							onResetNotes={handleResetNotes}
 							onCopyAll={handleCopyAll}
 							openSettings={openSettings}
@@ -480,7 +516,10 @@ function Home() {
 						/>
 					</div>
 				</div>
-				<div className="container mx-auto px-4">
+				<div
+					className="container mx-auto px-4"
+					style={{ fontSize: `${textSize.fontSize}px` }}
+				>
 					<CodeMirror
 						value={value}
 						onChange={handleChange}

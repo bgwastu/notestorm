@@ -4,7 +4,7 @@
 @custom-variant dark (&:is(.dark *));
 
 .cm-editor {
-  @apply text-lg max-w-4xl mx-auto px-4 pb-8;
+  @apply max-w-4xl mx-auto px-4 pb-8;
 }
 
 .cm-focused {
