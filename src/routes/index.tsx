@@ -479,12 +479,12 @@ function Home() {
 				<div className="flex justify-between items-center py-4 px-4 container mx-auto">
 					<div></div>
 					<div className="flex items-center gap-2">
-						{(os === "macos" || os === "ios") && navigator.share && (
+						{navigator.share && (
 							<Button
 								variant="ghost"
 								size="icon"
 								onClick={handleShare}
-								title="Share to Apple Notes"
+								title="Share notes"
 							>
 								<Share className="h-5 w-5" />
 							</Button>
