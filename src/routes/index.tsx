@@ -20,8 +20,10 @@ import { createFileRoute } from "@tanstack/react-router";
 import { createTheme } from "@uiw/codemirror-themes";
 import CodeMirror, { EditorView, keymap } from "@uiw/react-codemirror";
 import { generateText } from "ai";
+import { Share } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 import { ChromeFeaturesModal } from "@/components/chrome-features-modal";
 import { MenuButton } from "@/components/menu-button";
 import { OnboardingModal } from "@/components/onboarding-modal";
@@ -178,6 +180,26 @@ function Home() {
 		} catch (error) {
 			console.error("Failed to copy content:", error);
 			toast.error("Failed to copy content to clipboard");
+		}
+	}, [value]);
+
+	const handleShare = useCallback(async () => {
+		if (!navigator.share) {
+			toast.error("Share feature is not supported in this browser");
+			return;
+		}
+
+		try {
+			await navigator.share({
+				title: "My Notes",
+				text: value,
+			});
+		} catch (error) {
+			// User cancelled the share or it failed
+			if ((error as Error).name !== "AbortError") {
+				console.error("Failed to share content:", error);
+				toast.error("Failed to share content");
+			}
 		}
 	}, [value]);
 
@@ -457,6 +479,16 @@ function Home() {
 				<div className="flex justify-between items-center py-4 px-4 container mx-auto">
 					<div></div>
 					<div className="flex items-center gap-2">
+						{(os === "macos" || os === "ios") && navigator.share && (
+							<Button
+								variant="ghost"
+								size="icon"
+								onClick={handleShare}
+								title="Share to Apple Notes"
+							>
+								<Share className="h-5 w-5" />
+							</Button>
+						)}
 						<MenuButton
 							spellcheckEnabled={spellcheck.enabled}
 							onSpellcheckToggle={setSpellcheckEnabled}
