@@ -313,6 +313,18 @@ export function MenuButton({
 								Bagas Wastu
 							</a>
 						</p>
+						<p className="text-sm text-muted-foreground">
+							This app is open source! Check out the code on{" "}
+							<a
+								href="https://github.com/bgwastu/notestorm"
+								target="_blank"
+								rel="noopener noreferrer"
+								className="underline hover:text-foreground"
+							>
+								GitHub
+							</a>
+							.
+						</p>
 						<p className="text-xs text-muted-foreground">
 							PS: You can use VS Code keybindings too!
 						</p>
