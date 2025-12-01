@@ -121,6 +121,7 @@ function Home() {
 		rewriter,
 		onboarding,
 		chromeFeatures,
+		textSize,
 		isReady: isSettingsReady,
 		selectProvider,
 		setModelId,
@@ -132,6 +133,7 @@ function Home() {
 		setRewriterEnabled,
 		setHasSeenOnboarding,
 		setHasSeenChromeFeatures,
+		setTextSize,
 	} = settingsHook;
 	const activeApiKey = activeEntry.apiKey;
 	const useDemoApi = demo.useDemoApi;
@@ -468,11 +470,13 @@ function Home() {
 							activeModel={activeModel}
 							demo={demo}
 							autoGeneration={autoGeneration}
+							textSize={textSize}
 							selectProvider={selectProvider}
 							setModelId={setModelId}
 							setApiKey={setApiKey}
 							setAiMode={setAiMode}
 							setAutoGenerationEnabled={setAutoGenerationEnabled}
+							setTextSize={setTextSize}
 							onResetNotes={handleResetNotes}
 							onCopyAll={handleCopyAll}
 							openSettings={openSettings}
@@ -480,7 +484,10 @@ function Home() {
 						/>
 					</div>
 				</div>
-				<div className="container mx-auto px-4">
+				<div
+					className="container mx-auto px-4"
+					style={{ fontSize: `${textSize.fontSize}px` }}
+				>
 					<CodeMirror
 						value={value}
 						onChange={handleChange}

@@ -61,11 +61,13 @@ interface MenuButtonProps {
 	activeModel: ProviderModel | undefined;
 	demo: { useDemoApi: boolean; aiMode: "demo" | "local" | "chrome" };
 	autoGeneration: { enabled: boolean };
+	textSize: { fontSize: number };
 	selectProvider: (provider: SettingsProvider) => void;
 	setModelId: (modelId: string) => void;
 	setApiKey: (apiKey: string) => void;
 	setAiMode: (mode: "demo" | "local" | "chrome") => void;
 	setAutoGenerationEnabled: (enabled: boolean) => void;
+	setTextSize: (fontSize: number) => void;
 	onResetNotes: () => void;
 	onCopyAll: () => void;
 	openSettings?: boolean;
@@ -85,11 +87,13 @@ export function MenuButton({
 	activeModel,
 	demo,
 	autoGeneration,
+	textSize,
 	selectProvider,
 	setModelId,
 	setApiKey,
 	setAiMode,
 	setAutoGenerationEnabled,
+	setTextSize,
 	onResetNotes,
 	onCopyAll,
 	openSettings = false,
@@ -117,6 +121,7 @@ export function MenuButton({
 	const rewriterId = useId();
 	const aiFeatureId = useId();
 	const spellcheckId = useId();
+	const textSizeId = useId();
 
 	useEffect(() => {
 		if (hasCheckedSupport) return;
@@ -405,6 +410,25 @@ export function MenuButton({
 								checked={spellcheckEnabled}
 								onCheckedChange={onSpellcheckToggle}
 							/>
+						</div>
+						<div className="flex flex-col gap-2">
+							<Label htmlFor={textSizeId}>Editor Text Size</Label>
+							<Select
+								value={textSize.fontSize.toString()}
+								onValueChange={(value) => setTextSize(Number.parseInt(value))}
+							>
+								<SelectTrigger id={textSizeId} className="w-full">
+									<SelectValue placeholder="Select text size" />
+								</SelectTrigger>
+								<SelectContent>
+									<SelectItem value="14">Small (14px)</SelectItem>
+									<SelectItem value="16">Medium (16px)</SelectItem>
+									<SelectItem value="18">Large (18px)</SelectItem>
+									<SelectItem value="20">Extra Large (20px)</SelectItem>
+									<SelectItem value="22">2X Large (22px)</SelectItem>
+									<SelectItem value="24">3X Large (24px)</SelectItem>
+								</SelectContent>
+							</Select>
 						</div>
 						<div className="flex items-center justify-between">
 							<Label htmlFor={rewriterId} className="cursor-pointer">
