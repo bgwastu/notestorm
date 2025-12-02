@@ -20,23 +20,20 @@ import { createFileRoute } from "@tanstack/react-router";
 import { createTheme } from "@uiw/codemirror-themes";
 import CodeMirror, { EditorView, keymap } from "@uiw/react-codemirror";
 import { generateText } from "ai";
+import { wrappedLineIndent } from "codemirror-wrapped-line-indent";
 import { Share } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
 import { ChromeFeaturesModal } from "@/components/chrome-features-modal";
 import { MenuButton } from "@/components/menu-button";
 import { OnboardingModal } from "@/components/onboarding-modal";
 import { RewriterDialog } from "@/components/rewriter-dialog";
 import { TextSelectionMenu } from "@/components/text-selection-menu";
+import { Button } from "@/components/ui/button";
 import { useEditorPersistence } from "@/hooks/use-editor-persistence";
 import { useSettingsPersistence } from "@/hooks/use-settings-persistence";
 import { aiCompletion, stripReasoningContent } from "@/lib/completion";
-import {
-	AI_CONFIG,
-	KEYBOARD_SHORTCUTS,
-	STORAGE_KEYS,
-} from "@/lib/constants";
+import { AI_CONFIG, KEYBOARD_SHORTCUTS, STORAGE_KEYS } from "@/lib/constants";
 import { generatePrompt } from "@/lib/prompt-api";
 import {
 	createProviderModel,
@@ -317,6 +314,7 @@ function Home() {
 	const extensions = useMemo(
 		() => [
 			EditorView.lineWrapping,
+			wrappedLineIndent,
 			history(),
 			...rewriterKeymap,
 			keymap.of([
@@ -339,7 +337,9 @@ function Home() {
 						aiCompletion({
 							hotkey: AI_CONFIG.COMPLETION_HOTKEY,
 							autoTriggerDelay: autoGeneration.enabled
-								? (isMobile ? 300 : AI_CONFIG.AUTO_TRIGGER_DELAY)
+								? isMobile
+									? 300
+									: AI_CONFIG.AUTO_TRIGGER_DELAY
 								: undefined,
 							suppressAutoErrors: autoGeneration.enabled,
 							command:
@@ -479,7 +479,7 @@ function Home() {
 				<div className="flex justify-between items-center py-4 px-4 container mx-auto">
 					<div></div>
 					<div className="flex items-center gap-2">
-						{navigator.share && (
+						{navigator.share && typeof navigator.share === "function" ? (
 							<Button
 								variant="ghost"
 								size="icon"
@@ -488,7 +488,7 @@ function Home() {
 							>
 								<Share className="h-5 w-5" />
 							</Button>
-						)}
+						) : null}
 						<MenuButton
 							spellcheckEnabled={spellcheck.enabled}
 							onSpellcheckToggle={setSpellcheckEnabled}
