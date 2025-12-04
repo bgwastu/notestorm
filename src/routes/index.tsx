@@ -20,7 +20,6 @@ import { createFileRoute } from "@tanstack/react-router";
 import { createTheme } from "@uiw/codemirror-themes";
 import CodeMirror, { EditorView, keymap } from "@uiw/react-codemirror";
 import { generateText } from "ai";
-import { wrappedLineIndent } from "codemirror-wrapped-line-indent";
 import { Share } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
@@ -314,7 +313,6 @@ function Home() {
 	const extensions = useMemo(
 		() => [
 			EditorView.lineWrapping,
-			wrappedLineIndent,
 			history(),
 			...rewriterKeymap,
 			keymap.of([
